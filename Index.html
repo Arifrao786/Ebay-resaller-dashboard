@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eBay Reseller Winning Products</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 15px; }
+        h1 { text-align: center; color: #333; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 20px; }
+        .card { background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .card h3 { margin-top: 0; font-size: 16px; color: #222; }
+        .price { font-size: 14px; margin: 5px 0; color: #555; }
+        .profit { font-weight: bold; color: #2e7d32; }
+        .badge { background: #e8f5e9; color: #2e7d32; padding: 4px 8px; border-radius: 5px; font-size: 12px; font-weight: bold; display: inline-block; }
+        .btn { display: inline-block; margin-top: 10px; padding: 8px 12px; background: #0066c0; color: #fff; text-decoration: none; border-radius: 5px; font-size: 13px; }
+        .btn-ali { background: #ff4747; }
+    </style>
+</head>
+<body>
+
+    <h1>🚀 Winning Products Dashboard</h1>
+    <div id="products-container" class="grid">Loading products...</div>
+
+    <script>
+        const SUPABASE_URL = "https://doqmnxccvnmvcpneeueu.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcW1ueGNjdm5tdmNwbmVldWV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwNjI2NzUsImV4cCI6MjEwNDYzODY3NX0.gy5QA0xh_yx26AZ_0d7upHtjCClBvIv48brdRE8NMhY";
+
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function loadProducts() {
+            const container = document.getElementById("products-container");
+            const { data: products, error } = await supabaseClient.from("products").select("*");
+
+            if (error) {
+                container.innerHTML = "<p>Error loading data!</p>";
+                console.error(error);
+                return;
+            }
+
+            if (products.length === 0) {
+                container.innerHTML = "<p>No products found yet. Run the Python script to fetch products.</p>";
+                return;
+            }
+
+            container.innerHTML = "";
+            products.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    <h3>${item.title}</h3>
+                    <div class="price">eBay Price: <b>$${item.ebay_price}</b></div>
+                    <div class="price">AliExpress Price: <b>$${item.aliexpress_price || 'N/A'}</b></div>
+                    <div class="profit">Profit Margin: <span class="badge">${item.profit_margin}%</span></div>
+                    <div class="price">Daily Sales: <b>${item.daily_sales || 0}</b></div>
+                    <a href="${item.ebay_url}" target="_blank" class="btn">View on eBay</a>
+                    ${item.aliexpress_url ? `<a href="${item.aliexpress_url}" target="_blank" class="btn btn-ali">Supplier Link</a>` : ''}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        loadProducts();
+    </script>
+</body>
+</html>
