@@ -78,19 +78,44 @@
     <main class="max-w-7xl mx-auto p-6 w-full flex-grow">
       
       <!-- Filter Bar -->
-      <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-        <div>
-          <h2 class="text-lg font-bold text-gray-800">Product Analytics & Competitors</h2>
-          <p class="text-xs text-gray-500">Toggle sales metrics between Weekly and Overall views</p>
+      <div class="mb-6 flex flex-col gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-gray-800">Product Analytics & Filters</h2>
+            <p class="text-xs text-gray-500">Filter products by date status, market, and sales metrics</p>
+          </div>
+          
+          <!-- Sales Metric Toggle -->
+          <div class="flex items-center gap-1 bg-gray-100 p-1 rounded-xl">
+            <button id="metric-daily" onclick="setSalesView('daily')" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition">
+              ⚡ Daily
+            </button>
+            <button id="metric-weekly" onclick="setSalesView('weekly')" class="px-3 py-1.5 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition">
+              📅 Weekly
+            </button>
+            <button id="metric-overall" onclick="setSalesView('overall')" class="px-3 py-1.5 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition">
+              📊 Overall
+            </button>
+          </div>
         </div>
-        
-        <div class="flex items-center gap-2 bg-gray-100 p-1 rounded-xl">
-          <button id="filter-weekly" onclick="setSalesView('weekly')" class="px-4 py-2 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition">
-            📅 Weekly Sales
-          </button>
-          <button id="filter-overall" onclick="setSalesView('overall')" class="px-4 py-2 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition">
-            📊 Overall Sales
-          </button>
+
+        <!-- Secondary Filters (Today/Yesterday & Markets) -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-gray-100 text-xs">
+          <!-- Date / Tag Filter -->
+          <div class="flex items-center gap-1 bg-gray-50 p-1 rounded-xl border">
+            <button id="tag-all" onclick="filterByTag('all')" class="px-3 py-1.5 font-bold rounded-lg bg-blue-600 text-white transition">All Products</button>
+            <button id="tag-today" onclick="filterByTag('today')" class="px-3 py-1.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-200 transition">🔥 Today Products</button>
+            <button id="tag-yesterday" onclick="filterByTag('yesterday')" class="px-3 py-1.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-200 transition">📦 Yesterday Products</button>
+          </div>
+
+          <!-- Market Filter -->
+          <div class="flex items-center gap-1 bg-gray-50 p-1 rounded-xl border">
+            <button id="market-all" onclick="filterByMarket('all')" class="px-3 py-1.5 font-bold rounded-lg bg-gray-800 text-white transition">All Markets</button>
+            <button id="market-usa" onclick="filterByMarket('USA')" class="px-3 py-1.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-200 transition">🇺🇸 USA</button>
+            <button id="market-uk" onclick="filterByMarket('UK')" class="px-3 py-1.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-200 transition">🇬🇧 UK</button>
+            <button id="market-aus" onclick="filterByMarket('Australia')" class="px-3 py-1.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-200 transition">🇦🇺 Australia</button>
+            <button id="market-can" onclick="filterByMarket('Canada')" class="px-3 py-1.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-200 transition">🇨🇦 Canada</button>
+          </div>
         </div>
       </div>
 
@@ -112,7 +137,9 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let currentMode = 'login';
-    let currentSalesView = 'weekly'; // default view
+    let currentSalesView = 'daily'; // default view
+    let selectedTag = 'all';
+    let selectedMarket = 'all';
     let globalProductsData = [];
 
     function switchMode(mode) {
@@ -187,17 +214,46 @@
 
     function setSalesView(view) {
       currentSalesView = view;
-      const btnWeekly = document.getElementById('filter-weekly');
-      const btnOverall = document.getElementById('filter-overall');
+      ['daily', 'weekly', 'overall'].forEach(v => {
+        const btn = document.getElementById(`metric-${v}`);
+        if (v === view) {
+          btn.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition";
+        } else {
+          btn.className = "px-3 py-1.5 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition";
+        }
+      });
+      renderProducts();
+    }
 
-      if (view === 'weekly') {
-        btnWeekly.className = "px-4 py-2 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition";
-        btnOverall.className = "px-4 py-2 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition";
-      } else {
-        btnOverall.className = "px-4 py-2 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition";
-        btnWeekly.className = "px-4 py-2 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition";
-      }
+    function filterByTag(tag) {
+      selectedTag = tag;
+      ['all', 'today', 'yesterday'].forEach(t => {
+        const btn = document.getElementById(`tag-${t}`);
+        if (t === tag) {
+          btn.className = "px-3 py-1.5 font-bold rounded-lg bg-blue-600 text-white transition";
+        } else {
+          btn.className = "px-3 py-1.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-200 transition";
+        }
+      });
+      renderProducts();
+    }
 
+    function filterByMarket(market) {
+      selectedMarket = market;
+      ['all', 'usa', 'uk', 'aus', 'can'].forEach(m => {
+        const btnId = `market-${m}`;
+        const btn = document.getElementById(btnId);
+        const matches = (market === 'all' && m === 'all') || 
+                        (market === 'USA' && m === 'usa') || 
+                        (market === 'UK' && m === 'uk') || 
+                        (market === 'Australia' && m === 'aus') || 
+                        (market === 'Canada' && m === 'can');
+        if (matches) {
+          btn.className = "px-3 py-1.5 font-bold rounded-lg bg-gray-800 text-white transition";
+        } else {
+          btn.className = "px-3 py-1.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-200 transition";
+        }
+      });
       renderProducts();
     }
 
@@ -219,12 +275,26 @@
     function renderProducts() {
       const grid = document.getElementById('product-grid');
 
-      if (globalProductsData.length === 0) {
-        grid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">No products found. Run your Python script!</p>';
+      // Filter Data
+      let filtered = globalProductsData.filter(item => {
+        const tag = (item.product_tag || "").toLowerCase();
+        
+        // Tag filter logic
+        if (selectedTag === 'today' && !tag.includes('today')) return false;
+        if (selectedTag === 'yesterday' && !tag.includes('yesterday')) return false;
+
+        // Market filter logic
+        if (selectedMarket !== 'all' && item.best_market !== selectedMarket) return false;
+
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">No matching products found.</p>';
         return;
       }
 
-      grid.innerHTML = globalProductsData.map(item => {
+      grid.innerHTML = filtered.map(item => {
         const title = item.title || "Untitled Product";
         const ebayPrice = item.ebay_price ? `$${Number(item.ebay_price).toFixed(2)}` : "N/A";
         const supplierPrice = item.supplier_price ? `$${Number(item.supplier_price).toFixed(2)}` : "N/A";
@@ -232,24 +302,43 @@
         const ebayUrl = item.ebay_url || "#";
         const bestMarket = item.best_market || "USA";
         const competitorCount = item.competitor_count || 0;
+        const productTag = item.product_tag || "Today Product";
+        
+        // AliExpress Search URL generated dynamically from title
+        const aliExpressUrl = `https://www.aliexpress.com/wholesale?SearchText=${encodeURIComponent(title)}`;
 
-        // Sales metric toggle logic
-        const salesLabel = currentSalesView === 'weekly' ? 'Weekly Sales' : 'Total Sales';
-        const salesValue = currentSalesView === 'weekly' ? (item.weekly_sales || 25) : (item.total_sales || 1050);
+        // Sales metric value
+        let salesLabel = 'Daily Sales';
+        let salesValue = item.daily_sales || 4;
+        if (currentSalesView === 'weekly') {
+          salesLabel = 'Weekly Sales';
+          salesValue = item.weekly_sales || 25;
+        } else if (currentSalesView === 'overall') {
+          salesLabel = 'Total Sales';
+          salesValue = item.total_sales || 1050;
+        }
+
+        const tagBadge = productTag.toLowerCase().includes('yesterday') 
+          ? '<span class="bg-gray-100 text-gray-700 text-xs px-2.5 py-1 rounded-full font-bold">📦 Yesterday Product</span>'
+          : '<span class="bg-purple-100 text-purple-700 text-xs px-2.5 py-1 rounded-full font-bold">🔥 Today Product</span>';
 
         return `
           <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition">
             <div>
-              <div class="flex justify-between items-center mb-3">
+              <div class="flex justify-between items-center gap-2 mb-3">
                 <span class="bg-blue-50 text-blue-700 text-xs px-2.5 py-1 rounded-full font-bold">🌍 ${bestMarket}</span>
-                <span class="bg-orange-50 text-orange-600 text-xs px-2.5 py-1 rounded-full font-semibold">
+                ${tagBadge}
+              </div>
+
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-orange-600 font-semibold bg-orange-50 px-2 py-0.5 rounded-md">
                   <i class="fa-solid fa-users mr-1"></i> Competitors: ${competitorCount}
                 </span>
               </div>
 
               <h3 class="font-bold text-gray-800 text-base mb-3 line-clamp-2">${title}</h3>
 
-              <!-- Left/Right Split Box for Sales & Pricing -->
+              <!-- Sales & Profit Box -->
               <div class="grid grid-cols-2 gap-3 mb-4 bg-gray-50 p-3 rounded-xl border border-gray-100 text-center">
                 <div class="border-r border-gray-200 pr-2 flex flex-col justify-center">
                   <span class="text-[11px] text-gray-500 font-medium">${salesLabel}</span>
@@ -267,9 +356,14 @@
               </div>
             </div>
 
-            <a href="${ebayUrl}" target="_blank" class="block text-center bg-gray-900 text-white font-semibold py-2.5 rounded-xl hover:bg-blue-600 transition text-xs shadow-sm">
-              <i class="fa-solid fa-external-link-alt mr-1"></i> View on eBay
-            </a>
+            <div class="space-y-2">
+              <a href="${ebayUrl}" target="_blank" class="block text-center bg-gray-900 text-white font-semibold py-2.5 rounded-xl hover:bg-blue-600 transition text-xs shadow-sm">
+                <i class="fa-solid fa-external-link-alt mr-1"></i> View on eBay
+              </a>
+              <a href="${aliExpressUrl}" target="_blank" class="block text-center bg-red-600 text-white font-semibold py-2 rounded-xl hover:bg-red-700 transition text-xs shadow-sm">
+                <i class="fa-solid fa-cart-shopping mr-1"></i> View on AliExpress
+              </a>
+            </div>
           </div>
         `;
       }).join('');
