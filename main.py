@@ -1,4 +1,5 @@
 import os
+import random
 import requests
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
@@ -12,6 +13,19 @@ MARKETPLACES = {
     "Australia": "EBAY_AU",
     "Canada": "EBAY_CA"
 }
+
+TRENDING_KEYWORDS = [
+    "smart home gadgets",
+    "kitchen organizing tools",
+    "fitness accessories",
+    "car gadgets",
+    "wireless chargers",
+    "LED room lights",
+    "pet supplies",
+    "office desk setup",
+    "phone accessories",
+    "portable tools"
+]
 
 def get_ebay_token():
     url = "https://api.ebay.com/identity/v1/oauth2/token"
@@ -47,6 +61,17 @@ def analyze_market_competitors(token, search_keyword):
             market_stats[market_name] = {"competitors": 0, "items_found": 0}
     return market_stats
 
+def update_old_products_tag():
+    """Pehle se mojood products ka tag change kar ke 'Yesterday Product' kar deta hai"""
+    url = f"{SUPABASE_URL}/rest/v1/products?product_tag=eq.🔥 Today's Top Product"
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "return=minimal"
+    }
+    requests.patch(url, json={"product_tag": "📦 Yesterday Product"}, headers=headers)
+
 def save_to_supabase(product_data):
     url = f"{SUPABASE_URL}/rest/v1/products"
     headers = {
@@ -58,12 +83,17 @@ def save_to_supabase(product_data):
     res = requests.post(url, json=product_data, headers=headers)
     return res.status_code in [200, 201]
 
-def fetch_and_save_winning_products(search_keyword="trending gadgets"):
-    print(f"🔎 Fetching live market data for: {search_keyword}...")
+def fetch_and_save_winning_products():
+    search_keyword = random.choice(TRENDING_KEYWORDS)
+    print(f"🔎 Fetching live market data for category: {search_keyword}...")
+    
     token = get_ebay_token()
     if not token:
         print("❌ Authentication failed.")
         return
+
+    # Naye products lane se pehle purane walo ko 'Yesterday Product' tag de do
+    update_old_products_tag()
 
     market_stats = analyze_market_competitors(token, search_keyword)
     best_market = max(market_stats, key=lambda m: market_stats[m]["competitors"])
@@ -101,7 +131,8 @@ def fetch_and_save_winning_products(search_keyword="trending gadgets"):
                 "is_top_usa": market_stats.get("USA", {}).get("items_found", 0) > 0,
                 "is_top_uk": market_stats.get("UK", {}).get("items_found", 0) > 0,
                 "is_top_australia": market_stats.get("Australia", {}).get("items_found", 0) > 0,
-                "is_top_canada": market_stats.get("Canada", {}).get("items_found", 0) > 0
+                "is_top_canada": market_stats.get("Canada", {}).get("items_found", 0) > 0,
+                "product_tag": "🔥 Today's Top Product"  # Naye products ke liye tag
             }
 
             if save_to_supabase(product_data):
@@ -110,5 +141,5 @@ def fetch_and_save_winning_products(search_keyword="trending gadgets"):
                 print(f"❌ Failed to insert")
 
 if __name__ == "__main__":
-    fetch_and_save_winning_products("trending gadgets")
-          
+    fetch_and_save_winning_products()
+    
