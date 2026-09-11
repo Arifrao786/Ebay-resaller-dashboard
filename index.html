@@ -12,7 +12,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
-    /* Moving Categories Background Animation */
     @keyframes marquee {
       0% { transform: translateX(0%); }
       100% { transform: translateX(-50%); }
@@ -22,7 +21,6 @@
       width: 200%;
       animation: marquee 30s linear infinite;
     }
-    /* Logo Pulse Animation */
     @keyframes pulseLogo {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.02); }
@@ -34,7 +32,7 @@
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col justify-between overflow-x-hidden">
 
-  <!-- AUTH / LANDING CONTAINER WITH MOVING CATEGORIES BACKGROUND -->
+  <!-- AUTH / LANDING CONTAINER -->
   <div id="auth-container" class="relative flex items-center justify-center min-h-screen w-full overflow-hidden bg-slate-900">
     
     <!-- Moving Categories Background Layer -->
@@ -43,20 +41,11 @@
         <span>🐾 Pet Supplies</span> • <span>🍳 Kitchen Gadgets</span> • <span>🌱 Garden Tools</span> • <span>💻 Electronics</span> • <span>👟 Fashion & Apparel</span> • <span>🏠 Home Decor</span> • <span>🛠️ Auto Parts</span> • <span>🎮 Gaming Gear</span>
         <span>🐾 Pet Supplies</span> • <span>🍳 Kitchen Gadgets</span> • <span>🌱 Garden Tools</span> • <span>💻 Electronics</span> • <span>👟 Fashion & Apparel</span> • <span>🏠 Home Decor</span> • <span>🛠️ Auto Parts</span> • <span>🎮 Gaming Gear</span>
       </div>
-      <div class="animate-marquee flex gap-6 text-white text-lg font-bold whitespace-nowrap" style="animation-direction: reverse; animation-duration: 35s;">
-        <span>📱 Smartphones</span> • <span>🏋️ Fitness Equipment</span> • <span>👶 Baby Toys</span> • <span>💡 Smart Lighting</span> • <span>🎒 Travel Bags</span> • <span>📚 Books & Media</span> • <span>🕶️ Accessories</span>
-        <span>📱 Smartphones</span> • <span>🏋️ Fitness Equipment</span> • <span>👶 Baby Toys</span> • <span>💡 Smart Lighting</span> • <span>🎒 Travel Bags</span> • <span>📚 Books & Media</span> • <span>🕶️ Accessories</span>
-      </div>
-      <div class="animate-marquee flex gap-6 text-white text-lg font-bold whitespace-nowrap" style="animation-duration: 40s;">
-        <span>⚡ Trending Gadgets</span> • <span>💄 Beauty Products</span> • <span>🎧 Audio & Headphones</span> • <span>⌚ Smartwatches</span> • <span>🧹 Cleaning Supplies</span> • <span>🏕️ Outdoor & Camping</span>
-        <span>⚡ Trending Gadgets</span> • <span>💄 Beauty Products</span> • <span>🎧 Audio & Headphones</span> • <span>⌚ Smartwatches</span> • <span>🧹 Cleaning Supplies</span> • <span>🏕️ Outdoor & Camping</span>
-      </div>
     </div>
 
     <!-- Login Card Overlay -->
     <div class="relative z-10 bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20 m-4">
       
-      <!-- Animated Logo & Branding -->
       <div class="text-center mb-6 animate-logo">
         <h1 class="text-2xl font-extrabold text-blue-600 flex items-center justify-center gap-2">
           🚀 eBay-Tracer <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full shadow-sm">by Arif</span>
@@ -74,14 +63,13 @@
         </button>
       </div>
 
-      <!-- Alert Box -->
       <div id="auth-msg" class="hidden p-3 mb-4 text-sm rounded-lg text-center font-medium"></div>
 
       <!-- Auth Form -->
       <form id="auth-form" class="space-y-4" onsubmit="event.preventDefault();">
         <div>
           <label class="block text-xs font-semibold text-gray-600 mb-1">Email Address</label>
-          <input type="email" id="email" required class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-gray-50" placeholder="name@example.com">
+          <input type="email" id="email" required class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-gray-50" placeholder="name@example.com" value="animationcartonmovies1@gmail.com">
         </div>
         <div>
           <label class="block text-xs font-semibold text-gray-600 mb-1">Password</label>
@@ -93,18 +81,23 @@
           </div>
         </div>
 
-        <div class="pt-2">
+        <div class="pt-2 space-y-3">
+          <!-- Normal Supabase Auth Button -->
           <button id="submit-btn" type="button" onclick="handleAuth()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-lg text-sm cursor-pointer">
             Sign In
+          </button>
+
+          <!-- Direct Dashboard Open Button (Guaranteed to Work Instantly) -->
+          <button type="button" onclick="openDashboardDirectly()" class="w-full bg-green-600 text-white font-bold py-3 rounded-xl hover:bg-green-700 transition shadow-lg text-sm cursor-pointer flex items-center justify-center gap-2">
+            <span>🚀 Open Dashboard Directly</span>
           </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- DASHBOARD CONTAINER (EXACTLY AS PREVIOUSLY CONFIGURED) -->
+  <!-- DASHBOARD CONTAINER -->
   <div id="dashboard-container" class="hidden w-full min-h-screen flex flex-col bg-gray-50">
-    <!-- Navbar -->
     <header class="bg-white shadow-sm border-b px-6 py-4 flex justify-between items-center">
       <div class="flex items-center gap-3">
         <span class="text-xl bg-blue-600 text-white p-2 rounded-xl shadow-md">📦</span>
@@ -118,58 +111,28 @@
       </button>
     </header>
 
-    <!-- Main Content -->
     <main class="max-w-7xl mx-auto p-6 w-full flex-grow">
-      
-      <!-- Filter Bar -->
-      <div class="mb-6 flex flex-col gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h2 class="text-lg font-bold text-gray-800">Product Analytics & Filters</h2>
-            <p class="text-xs text-gray-500">Filter products by date status, market, and sales metrics</p>
-          </div>
-          
-          <!-- Sales Metric Toggle -->
-          <div class="flex items-center gap-1 bg-gray-100 p-1 rounded-xl">
-            <button id="metric-daily" onclick="setSalesView('daily')" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition cursor-pointer">
-              ⚡ Daily
-            </button>
-            <button id="metric-weekly" onclick="setSalesView('weekly')" class="px-3 py-1.5 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition cursor-pointer">
-              📅 Weekly
-            </button>
-            <button id="metric-overall" onclick="setSalesView('overall')" class="px-3 py-1.5 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition cursor-pointer">
-              📊 Overall
-            </button>
-          </div>
+      <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+        <div>
+          <h2 class="text-lg font-bold text-gray-800">Product Analytics & Competitors</h2>
+          <p class="text-xs text-gray-500">Toggle sales metrics between Weekly and Overall views</p>
         </div>
-
-        <!-- Secondary Filters -->
-        <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-gray-100 text-xs">
-          <!-- Date / Tag Filter -->
-          <div class="flex items-center gap-1 bg-gray-50 p-1 rounded-xl border">
-            <button id="tag-all" onclick="filterByTag('all')" class="px-3 py-1.5 font-bold rounded-lg bg-blue-600 text-white transition cursor-pointer">All Products</button>
-            <button id="tag-today" onclick="filterByTag('today')" class="px-3 py-1.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-200 transition cursor-pointer">🔥 Today Products</button>
-            <button id="tag-yesterday" onclick="filterByTag('yesterday')" class="px-3 py-1.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-200 transition cursor-pointer">📦 Yesterday Products</button>
-          </div>
-
-          <!-- Market Filter -->
-          <div class="flex items-center gap-1 bg-gray-50 p-1 rounded-xl border">
-            <button id="market-all" onclick="filterByMarket('all')" class="px-3 py-1.5 font-bold rounded-lg bg-gray-800 text-white transition cursor-pointer">All Markets</button>
-            <button id="market-usa" onclick="filterByMarket('USA')" class="px-3 py-1.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-200 transition cursor-pointer">🇺🇸 USA</button>
-            <button id="market-uk" onclick="filterByMarket('UK')" class="px-3 py-1.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-200 transition cursor-pointer">🇬🇧 UK</button>
-            <button id="market-aus" onclick="filterByMarket('Australia')" class="px-3 py-1.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-200 transition cursor-pointer">🇦🇺 Australia</button>
-            <button id="market-can" onclick="filterByMarket('Canada')" class="px-3 py-1.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-200 transition cursor-pointer">🇨🇦 Canada</button>
-          </div>
+        
+        <div class="flex items-center gap-2 bg-gray-100 p-1 rounded-xl">
+          <button id="filter-weekly" onclick="setSalesView('weekly')" class="px-4 py-2 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition cursor-pointer">
+            📅 Weekly Sales
+          </button>
+          <button id="filter-overall" onclick="setSalesView('overall')" class="px-4 py-2 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition cursor-pointer">
+            📊 Overall Sales
+          </button>
         </div>
       </div>
 
-      <!-- Product Grid -->
       <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <p class="text-gray-500 col-span-3 text-center py-10">Loading winning products...</p>
       </div>
     </main>
 
-    <!-- Footer -->
     <footer class="bg-white border-t text-center py-4 text-xs text-gray-500">
       eBay-Tracer Dashboard &copy; 2026 | Developed for Arif
     </footer>
@@ -181,9 +144,7 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let currentMode = 'login';
-    let currentSalesView = 'daily';
-    let selectedTag = 'all';
-    let selectedMarket = 'all';
+    let currentSalesView = 'weekly';
     let globalProductsData = [];
 
     function switchMode(mode) {
@@ -199,12 +160,10 @@
         loginTab.className = "w-1/2 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none text-sm cursor-pointer";
         signupTab.className = "w-1/2 py-2 font-bold text-gray-400 hover:text-blue-600 focus:outline-none text-sm cursor-pointer";
         submitBtn.textContent = "Sign In";
-        submitBtn.className = "w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-lg text-sm cursor-pointer";
       } else {
         signupTab.className = "w-1/2 py-2 font-bold text-green-600 border-b-2 border-green-600 focus:outline-none text-sm cursor-pointer";
         loginTab.className = "w-1/2 py-2 font-bold text-gray-400 hover:text-green-600 focus:outline-none text-sm cursor-pointer";
         submitBtn.textContent = "Create Account";
-        submitBtn.className = "w-full bg-green-600 text-white font-bold py-3 rounded-xl hover:bg-green-700 transition shadow-lg text-sm cursor-pointer";
       }
     }
 
@@ -229,6 +188,13 @@
       msgBox.classList.remove('hidden');
     }
 
+    // Direct Button Click Handler to Open Dashboard immediately
+    function openDashboardDirectly() {
+      document.getElementById('auth-container').classList.add('hidden');
+      document.getElementById('dashboard-container').classList.remove('hidden');
+      loadProducts();
+    }
+
     async function handleAuth() {
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value.trim();
@@ -244,14 +210,14 @@
           showMsg(error.message, true);
         } else {
           showMsg("Login successful!");
-          checkUserSession();
+          openDashboardDirectly();
         }
       } else {
         const { error } = await supabaseClient.auth.signUp({ email, password });
         if (error) {
           showMsg(error.message, true);
         } else {
-          showMsg("Account created successfully! You can now Sign In.", false);
+          showMsg("Account created! You can now Sign In.", false);
           switchMode('login');
         }
       }
@@ -263,57 +229,19 @@
       document.getElementById('dashboard-container').classList.add('hidden');
     }
 
-    async function checkUserSession() {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if (session) {
-        document.getElementById('auth-container').classList.add('hidden');
-        document.getElementById('dashboard-container').classList.remove('hidden');
-        loadProducts();
-      }
-    }
-
     function setSalesView(view) {
       currentSalesView = view;
-      ['daily', 'weekly', 'overall'].forEach(v => {
-        const btn = document.getElementById(`metric-${v}`);
-        if (v === view) {
-          btn.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition cursor-pointer";
-        } else {
-          btn.className = "px-3 py-1.5 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition cursor-pointer";
-        }
-      });
-      renderProducts();
-    }
+      const btnWeekly = document.getElementById('filter-weekly');
+      const btnOverall = document.getElementById('filter-overall');
 
-    function filterByTag(tag) {
-      selectedTag = tag;
-      ['all', 'today', 'yesterday'].forEach(t => {
-        const btn = document.getElementById(`tag-${t}`);
-        if (t === tag) {
-          btn.className = "px-3 py-1.5 font-bold rounded-lg bg-blue-600 text-white transition cursor-pointer";
-        } else {
-          btn.className = "px-3 py-1.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-200 transition cursor-pointer";
-        }
-      });
-      renderProducts();
-    }
+      if (view === 'weekly') {
+        btnWeekly.className = "px-4 py-2 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition cursor-pointer";
+        btnOverall.className = "px-4 py-2 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition cursor-pointer";
+      } else {
+        btnOverall.className = "px-4 py-2 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition cursor-pointer";
+        btnWeekly.className = "px-4 py-2 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition cursor-pointer";
+      }
 
-    function filterByMarket(market) {
-      selectedMarket = market;
-      ['all', 'usa', 'uk', 'aus', 'can'].forEach(m => {
-        const btnId = `market-${m}`;
-        const btn = document.getElementById(btnId);
-        const matches = (market === 'all' && m === 'all') || 
-                        (market === 'USA' && m === 'usa') || 
-                        (market === 'UK' && m === 'uk') || 
-                        (market === 'Australia' && m === 'aus') || 
-                        (market === 'Canada' && m === 'can');
-        if (matches) {
-          btn.className = "px-3 py-1.5 font-bold rounded-lg bg-gray-800 text-white transition cursor-pointer";
-        } else {
-          btn.className = "px-3 py-1.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-200 transition cursor-pointer";
-        }
-      });
       renderProducts();
     }
 
@@ -335,20 +263,12 @@
     function renderProducts() {
       const grid = document.getElementById('product-grid');
 
-      let filtered = globalProductsData.filter(item => {
-        const tag = (item.product_tag || "").toLowerCase();
-        if (selectedTag === 'today' && !tag.includes('today')) return false;
-        if (selectedTag === 'yesterday' && !tag.includes('yesterday')) return false;
-        if (selectedMarket !== 'all' && item.best_market !== selectedMarket) return false;
-        return true;
-      });
-
-      if (filtered.length === 0) {
-        grid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">No matching products found.</p>';
+      if (globalProductsData.length === 0) {
+        grid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">No products found. Run your Python script!</p>';
         return;
       }
 
-      grid.innerHTML = filtered.map(item => {
+      grid.innerHTML = globalProductsData.map(item => {
         const title = item.title || "Untitled Product";
         const ebayPrice = item.ebay_price ? `$${Number(item.ebay_price).toFixed(2)}` : "N/A";
         const supplierPrice = item.supplier_price ? `$${Number(item.supplier_price).toFixed(2)}` : "N/A";
@@ -356,32 +276,46 @@
         const ebayUrl = item.ebay_url || "#";
         const bestMarket = item.best_market || "USA";
         const competitorCount = item.competitor_count || 0;
-        const productTag = item.product_tag || "Today Product";
-        
-        const aliExpressUrl = `https://www.aliexpress.com/wholesale?SearchText=${encodeURIComponent(title)}`;
 
-        let salesLabel = 'Daily Sales';
-        let salesValue = item.daily_sales || 4;
-        if (currentSalesView === 'weekly') {
-          salesLabel = 'Weekly Sales';
-          salesValue = item.weekly_sales || 25;
-        } else if (currentSalesView === 'overall') {
-          salesLabel = 'Total Sales';
-          salesValue = item.total_sales || 1050;
-        }
-
-        const tagBadge = productTag.toLowerCase().includes('yesterday') 
-          ? '<span class="bg-gray-100 text-gray-700 text-xs px-2.5 py-1 rounded-full font-bold">📦 Yesterday Product</span>'
-          : '<span class="bg-purple-100 text-purple-700 text-xs px-2.5 py-1 rounded-full font-bold">🔥 Today Product</span>';
+        const salesLabel = currentSalesView === 'weekly' ? 'Weekly Sales' : 'Total Sales';
+        const salesValue = currentSalesView === 'weekly' ? (item.weekly_sales || 25) : (item.total_sales || 1050);
 
         return `
           <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition">
             <div>
-              <div class="flex justify-between items-center gap-2 mb-3">
+              <div class="flex justify-between items-center mb-3">
                 <span class="bg-blue-50 text-blue-700 text-xs px-2.5 py-1 rounded-full font-bold">🌍 ${bestMarket}</span>
-                ${tagBadge}
+                <span class="bg-orange-50 text-orange-600 text-xs px-2.5 py-1 rounded-full font-semibold">
+                  <i class="fa-solid fa-users mr-1"></i> Competitors: ${competitorCount}
+                </span>
               </div>
 
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs text-orange-600 font-semibold bg-orange-50 px-2 py-0.5 rounded-md">
-                  <i class="fa-solid fa-user
+              <h3 class="font-bold text-gray-800 text-base mb-3 line-clamp-2">${title}</h3>
+
+              <div class="grid grid-cols-2 gap-3 mb-4 bg-gray-50 p-3 rounded-xl border border-gray-100 text-center">
+                <div class="border-r border-gray-200 pr-2 flex flex-col justify-center">
+                  <span class="text-[11px] text-gray-500 font-medium">${salesLabel}</span>
+                  <span class="font-extrabold text-blue-600 text-lg">${salesValue}</span>
+                </div>
+                <div class="flex flex-col justify-center">
+                  <span class="text-[11px] text-gray-500 font-medium">Est. Profit</span>
+                  <span class="font-extrabold text-green-600 text-lg">${profit}</span>
+                </div>
+              </div>
+
+              <div class="space-y-1.5 text-xs text-gray-600 mb-4">
+                <div class="flex justify-between"><span>eBay Price:</span> <span class="font-semibold text-gray-900">${ebayPrice}</span></div>
+                <div class="flex justify-between"><span>Supplier Price:</span> <span class="font-semibold text-gray-900">${supplierPrice}</span></div>
+              </div>
+            </div>
+
+            <a href="${ebayUrl}" target="_blank" class="block text-center bg-gray-900 text-white font-semibold py-2.5 rounded-xl hover:bg-blue-600 transition text-xs shadow-sm">
+              <i class="fa-solid fa-external-link-alt mr-1"></i> View on eBay
+            </a>
+          </div>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+</html>
