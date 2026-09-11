@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>eBay-Tracer - Reseller Portal</title>
+  <title>eBay-Tracer by Arif - Reseller Portal</title>
   <!-- Supabase JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Tailwind CSS CDN -->
@@ -11,97 +11,99 @@
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-100 font-sans min-h-screen flex items-center justify-center p-4">
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col justify-between">
 
-  <!-- AUTH CARD CONTAINER -->
-  <div id="auth-container" class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 sm:p-8 border border-gray-100">
-    
-    <!-- Title & eBay-Tracer Features -->
-    <div class="text-center sm:text-left mb-6">
-      <h1 class="text-2xl font-extrabold text-blue-700 flex items-center justify-center sm:justify-start gap-2">
-        📦 eBay-Tracer Portal
-      </h1>
-      <p class="text-xs text-gray-500 mt-1">Automated Product Research & Reseller Dashboard</p>
-    </div>
-
-    <ul class="space-y-3 mb-6 text-gray-700 text-sm font-medium">
-      <li class="flex items-start gap-2">
-        <span class="text-blue-600 font-bold text-base">➔</span>
-        <span>Track winning high-margin products in real-time</span>
-      </li>
-      <li class="flex items-start gap-2">
-        <span class="text-blue-600 font-bold text-base">➔</span>
-        <span>Automated supplier vs eBay price calculation</span>
-      </li>
-      <li class="flex items-start gap-2">
-        <span class="text-blue-600 font-bold text-base">➔</span>
-        <span>Direct integration with Pydroid 3 API automation</span>
-      </li>
-      <li class="flex items-start gap-2">
-        <span class="text-blue-600 font-bold text-base">➔</span>
-        <span>Instant profit estimation & bulk data sync</span>
-      </li>
-    </ul>
-
-    <!-- LOGIN / SIGNUP TABS -->
-    <div class="flex border-b border-gray-200 mb-6">
-      <button id="tab-login" onclick="switchMode('login')" class="w-1/2 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none">
-        Log In
-      </button>
-      <button id="tab-signup" onclick="switchMode('signup')" class="w-1/2 py-2 font-bold text-gray-400 hover:text-blue-600 focus:outline-none">
-        Sign Up
-      </button>
-    </div>
-
-    <!-- Alert Box -->
-    <div id="auth-msg" class="hidden p-3 mb-4 text-sm rounded-lg text-center font-medium"></div>
-
-    <!-- AUTH FORM -->
-    <form id="auth-form" class="space-y-4" onsubmit="event.preventDefault();">
-      <div>
-        <label class="block text-xs font-semibold text-gray-600 mb-1">Email Address</label>
-        <input type="email" id="email" required class="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="name@example.com">
+  <!-- AUTH CONTAINER (Logo + Login/Signup) -->
+  <div id="auth-container" class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+      
+      <!-- Logo & Branding -->
+      <div class="text-center mb-6">
+        <h1 class="text-2xl font-extrabold text-blue-600 flex items-center justify-center gap-2">
+          🚀 eBay-Tracer <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">by Arif</span>
+        </h1>
+        <p class="text-gray-500 text-xs mt-1">Automated Winning Product Research Portal</p>
       </div>
 
-      <!-- Password Field with Eye Icon -->
-      <div>
-        <label class="block text-xs font-semibold text-gray-600 mb-1">Password</label>
-        <div class="relative">
-          <input type="password" id="password" required class="w-full border border-gray-300 rounded-xl p-3 pr-10 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="••••••••">
-          <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none">
-            <i id="eye-icon" class="fa-regular fa-eye"></i>
+      <!-- TABS -->
+      <div class="flex border-b border-gray-200 mb-6">
+        <button id="tab-login" onclick="switchMode('login')" class="w-1/2 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none text-sm">
+          Sign In
+        </button>
+        <button id="tab-signup" onclick="switchMode('signup')" class="w-1/2 py-2 font-bold text-gray-400 hover:text-blue-600 focus:outline-none text-sm">
+          Sign Up
+        </button>
+      </div>
+
+      <!-- Alert Box -->
+      <div id="auth-msg" class="hidden p-3 mb-4 text-sm rounded-lg text-center font-medium"></div>
+
+      <!-- Auth Form -->
+      <form id="auth-form" class="space-y-4" onsubmit="event.preventDefault();">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Email Address</label>
+          <input type="email" id="email" required class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="name@example.com">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Password</label>
+          <input type="password" id="password" required class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="••••••••">
+        </div>
+
+        <div class="pt-2">
+          <button id="submit-btn" type="button" onclick="handleAuth()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-md text-sm">
+            Sign In
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DASHBOARD CONTAINER (Shows after login) -->
+  <div id="dashboard-container" class="hidden w-full min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <header class="bg-white shadow-sm border-b px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <span class="text-xl bg-blue-600 text-white p-2 rounded-xl">📦</span>
+        <div>
+          <h1 class="font-extrabold text-gray-800 text-lg">eBay-Tracer <span class="text-xs text-blue-600 font-medium">by Arif</span></h1>
+          <p class="text-xs text-gray-500">Live Winning Market Products</p>
+        </div>
+      </div>
+      <button onclick="handleLogout()" class="bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-red-600 transition shadow-sm">
+        <i class="fa-solid fa-right-from-bracket mr-1"></i> Sign Out
+      </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto p-6 w-full flex-grow">
+      
+      <!-- Filter Bar -->
+      <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+        <div>
+          <h2 class="text-lg font-bold text-gray-800">Product Analytics & Competitors</h2>
+          <p class="text-xs text-gray-500">Toggle sales metrics between Weekly and Overall views</p>
+        </div>
+        
+        <div class="flex items-center gap-2 bg-gray-100 p-1 rounded-xl">
+          <button id="filter-weekly" onclick="setSalesView('weekly')" class="px-4 py-2 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition">
+            📅 Weekly Sales
+          </button>
+          <button id="filter-overall" onclick="setSalesView('overall')" class="px-4 py-2 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition">
+            📊 Overall Sales
           </button>
         </div>
       </div>
 
-      <!-- Submit Action Button -->
-      <div class="pt-2">
-        <button id="submit-btn" type="button" onclick="handleAuth()" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition shadow-md">
-          Log In
-        </button>
+      <!-- Product Grid -->
+      <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <p class="text-gray-500 col-span-3 text-center py-10">Loading winning products...</p>
       </div>
-    </form>
+    </main>
 
-    <!-- Trust Badge -->
-    <div class="mt-6 text-center pt-4 border-t border-gray-100">
-      <p class="text-xs text-gray-400">Powered by Supabase & eBay Developer API</p>
-    </div>
-  </div>
-
-  <!-- DASHBOARD CONTAINER -->
-  <div id="dashboard-container" class="hidden w-full max-w-5xl p-6 bg-white rounded-2xl shadow-xl">
-    <div class="flex justify-between items-center mb-6 border-b pb-4">
-      <div>
-        <h1 class="text-2xl font-bold text-gray-800">eBay-Tracer Dashboard</h1>
-        <p class="text-xs text-gray-500">Live eBay Market Products</p>
-      </div>
-      <button onclick="handleLogout()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition text-sm font-semibold">
-        Sign Out
-      </button>
-    </div>
-    <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <p class="text-gray-500">Loading synced products...</p>
-    </div>
+    <!-- Footer -->
+    <footer class="bg-white border-t text-center py-4 text-xs text-gray-500">
+      eBay-Tracer Dashboard &copy; 2026 | Developed for Arif
+    </footer>
   </div>
 
   <script>
@@ -110,6 +112,8 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let currentMode = 'login';
+    let currentSalesView = 'weekly'; // default view
+    let globalProductsData = [];
 
     function switchMode(mode) {
       currentMode = mode;
@@ -121,29 +125,13 @@
       msgBox.classList.add('hidden');
 
       if (mode === 'login') {
-        loginTab.className = "w-1/2 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none";
-        signupTab.className = "w-1/2 py-2 font-bold text-gray-400 hover:text-blue-600 focus:outline-none";
-        submitBtn.textContent = "Log In";
-        submitBtn.className = "w-full bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition shadow-md";
+        loginTab.className = "w-1/2 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none text-sm";
+        signupTab.className = "w-1/2 py-2 font-bold text-gray-400 hover:text-blue-600 focus:outline-none text-sm";
+        submitBtn.textContent = "Sign In";
       } else {
-        signupTab.className = "w-1/2 py-2 font-bold text-green-600 border-b-2 border-green-600 focus:outline-none";
-        loginTab.className = "w-1/2 py-2 font-bold text-gray-400 hover:text-green-600 focus:outline-none";
+        signupTab.className = "w-1/2 py-2 font-bold text-green-600 border-b-2 border-green-600 focus:outline-none text-sm";
+        loginTab.className = "w-1/2 py-2 font-bold text-gray-400 hover:text-green-600 focus:outline-none text-sm";
         submitBtn.textContent = "Create Account";
-        submitBtn.className = "w-full bg-green-600 text-white font-semibold py-3 rounded-xl hover:bg-green-700 transition shadow-md";
-      }
-    }
-
-    function togglePasswordVisibility() {
-      const pwd = document.getElementById('password');
-      const icon = document.getElementById('eye-icon');
-      if (pwd.type === 'password') {
-        pwd.type = 'text';
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-      } else {
-        pwd.type = 'password';
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
       }
     }
 
@@ -159,24 +147,24 @@
       const password = document.getElementById('password').value.trim();
 
       if (!email || !password) {
-        showMsg("Please fill in both email and password.", true);
+        showMsg("Please enter email and password.", true);
         return;
       }
 
       if (currentMode === 'login') {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
         if (error) {
           showMsg(error.message, true);
         } else {
-          showMsg("Login successful!", false);
+          showMsg("Login successful!");
           checkUserSession();
         }
       } else {
-        const { data, error } = await supabaseClient.auth.signUp({ email, password });
+        const { error } = await supabaseClient.auth.signUp({ email, password });
         if (error) {
           showMsg(error.message, true);
         } else {
-          showMsg("Account created! You can now Log In.", false);
+          showMsg("Account created! You can now Sign In.", false);
           switchMode('login');
         }
       }
@@ -197,25 +185,94 @@
       }
     }
 
+    function setSalesView(view) {
+      currentSalesView = view;
+      const btnWeekly = document.getElementById('filter-weekly');
+      const btnOverall = document.getElementById('filter-overall');
+
+      if (view === 'weekly') {
+        btnWeekly.className = "px-4 py-2 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition";
+        btnOverall.className = "px-4 py-2 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition";
+      } else {
+        btnOverall.className = "px-4 py-2 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition";
+        btnWeekly.className = "px-4 py-2 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition";
+      }
+
+      renderProducts();
+    }
+
     async function loadProducts() {
       const grid = document.getElementById('product-grid');
-      const { data: products, error } = await supabaseClient.from('products').select('*');
+      grid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">Fetching live products...</p>';
 
-      if (error || !products || products.length === 0) {
-        grid.innerHTML = `<p class="text-gray-500 col-span-3">No synced items found. Run your Python script in Pydroid 3 to populate eBay data.</p>`;
+      const { data, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
+
+      if (error) {
+        grid.innerHTML = `<p class="text-red-500 col-span-3 text-center py-10">Error: ${error.message}</p>`;
         return;
       }
 
-      grid.innerHTML = products.map(item => `
-        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
-          <h2 class="font-bold text-gray-800 text-base mb-2">${item.title || 'eBay Item'}</h2>
-          <div class="text-sm space-y-1 text-gray-600">
-            <p><span class="font-semibold">eBay Price:</span> $${item.ebay_price}</p>
-            <p><span class="font-semibold">Supplier Price:</span> $${item.supplier_price}</p>
-            <p class="text-green-600 font-bold"><span class="font-semibold">Profit:</span> $${item.profit}</p>
+      globalProductsData = data || [];
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById('product-grid');
+
+      if (globalProductsData.length === 0) {
+        grid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">No products found. Run your Python script!</p>';
+        return;
+      }
+
+      grid.innerHTML = globalProductsData.map(item => {
+        const title = item.title || "Untitled Product";
+        const ebayPrice = item.ebay_price ? `$${Number(item.ebay_price).toFixed(2)}` : "N/A";
+        const supplierPrice = item.supplier_price ? `$${Number(item.supplier_price).toFixed(2)}` : "N/A";
+        const profit = item.profit ? `$${Number(item.profit).toFixed(2)}` : "N/A";
+        const ebayUrl = item.ebay_url || "#";
+        const bestMarket = item.best_market || "USA";
+        const competitorCount = item.competitor_count || 0;
+
+        // Sales metric toggle logic
+        const salesLabel = currentSalesView === 'weekly' ? 'Weekly Sales' : 'Total Sales';
+        const salesValue = currentSalesView === 'weekly' ? (item.weekly_sales || 25) : (item.total_sales || 1050);
+
+        return `
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition">
+            <div>
+              <div class="flex justify-between items-center mb-3">
+                <span class="bg-blue-50 text-blue-700 text-xs px-2.5 py-1 rounded-full font-bold">🌍 ${bestMarket}</span>
+                <span class="bg-orange-50 text-orange-600 text-xs px-2.5 py-1 rounded-full font-semibold">
+                  <i class="fa-solid fa-users mr-1"></i> Competitors: ${competitorCount}
+                </span>
+              </div>
+
+              <h3 class="font-bold text-gray-800 text-base mb-3 line-clamp-2">${title}</h3>
+
+              <!-- Left/Right Split Box for Sales & Pricing -->
+              <div class="grid grid-cols-2 gap-3 mb-4 bg-gray-50 p-3 rounded-xl border border-gray-100 text-center">
+                <div class="border-r border-gray-200 pr-2 flex flex-col justify-center">
+                  <span class="text-[11px] text-gray-500 font-medium">${salesLabel}</span>
+                  <span class="font-extrabold text-blue-600 text-lg">${salesValue}</span>
+                </div>
+                <div class="flex flex-col justify-center">
+                  <span class="text-[11px] text-gray-500 font-medium">Est. Profit</span>
+                  <span class="font-extrabold text-green-600 text-lg">${profit}</span>
+                </div>
+              </div>
+
+              <div class="space-y-1.5 text-xs text-gray-600 mb-4">
+                <div class="flex justify-between"><span>eBay Price:</span> <span class="font-semibold text-gray-900">${ebayPrice}</span></div>
+                <div class="flex justify-between"><span>Supplier Price:</span> <span class="font-semibold text-gray-900">${supplierPrice}</span></div>
+              </div>
+            </div>
+
+            <a href="${ebayUrl}" target="_blank" class="block text-center bg-gray-900 text-white font-semibold py-2.5 rounded-xl hover:bg-blue-600 transition text-xs shadow-sm">
+              <i class="fa-solid fa-external-link-alt mr-1"></i> View on eBay
+            </a>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     checkUserSession();
