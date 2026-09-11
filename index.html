@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Online Writing Remote Jobs - Reseller Portal</title>
+  <title>eBay-Tracer - Reseller Portal</title>
   <!-- Supabase JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Awesome Icons CDN -->
+  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-gray-100 font-sans min-h-screen flex items-center justify-center p-4">
@@ -16,144 +16,134 @@
   <!-- AUTH CARD CONTAINER -->
   <div id="auth-container" class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 sm:p-8 border border-gray-100">
     
-    <!-- Title & Feature Points -->
-    <h1 class="text-2xl font-bold text-gray-900 mb-4 text-center sm:text-left">
-      Online Writing Remote Jobs
-    </h1>
+    <!-- Title & eBay-Tracer Features -->
+    <div class="text-center sm:text-left mb-6">
+      <h1 class="text-2xl font-extrabold text-blue-700 flex items-center justify-center sm:justify-start gap-2">
+        📦 eBay-Tracer Portal
+      </h1>
+      <p class="text-xs text-gray-500 mt-1">Automated Product Research & Reseller Dashboard</p>
+    </div>
 
     <ul class="space-y-3 mb-6 text-gray-700 text-sm font-medium">
       <li class="flex items-start gap-2">
-        <span class="text-red-500 font-bold text-base">➔</span>
-        <span>More jobs, more interviews, more offers!</span>
+        <span class="text-blue-600 font-bold text-base">➔</span>
+        <span>Track winning high-margin products in real-time</span>
       </li>
       <li class="flex items-start gap-2">
-        <span class="text-red-500 font-bold text-base">➔</span>
-        <span>Access 80% more unpublished jobs via specialist headhunters</span>
+        <span class="text-blue-600 font-bold text-base">➔</span>
+        <span>Automated supplier vs eBay price calculation</span>
       </li>
       <li class="flex items-start gap-2">
-        <span class="text-red-500 font-bold text-base">➔</span>
-        <span>Create an ATS-friendly resume</span>
+        <span class="text-blue-600 font-bold text-base">➔</span>
+        <span>Direct integration with Pydroid 3 API automation</span>
       </li>
       <li class="flex items-start gap-2">
-        <span class="text-red-500 font-bold text-base">➔</span>
-        <span>Get a free resume review</span>
+        <span class="text-blue-600 font-bold text-base">➔</span>
+        <span>Instant profit estimation & bulk data sync</span>
       </li>
     </ul>
 
-    <!-- Social Login Buttons -->
-    <div class="space-y-3 mb-4">
-      <button onclick="handleSocialAuth('google')" class="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-full py-2.5 px-4 font-semibold text-gray-700 hover:bg-gray-50 transition">
-        <i class="fa-brands fa-google text-red-500 text-lg"></i> Continue with Google
+    <!-- LOGIN / SIGNUP TABS -->
+    <div class="flex border-b border-gray-200 mb-6">
+      <button id="tab-login" onclick="switchMode('login')" class="w-1/2 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none">
+        Log In
       </button>
-      <button onclick="handleSocialAuth('linkedin')" class="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-full py-2.5 px-4 font-semibold text-gray-700 hover:bg-gray-50 transition">
-        <i class="fa-brands fa-linkedin text-blue-600 text-lg"></i> Continue with LinkedIn
+      <button id="tab-signup" onclick="switchMode('signup')" class="w-1/2 py-2 font-bold text-gray-400 hover:text-blue-600 focus:outline-none">
+        Sign Up
       </button>
-      <button onclick="handleSocialAuth('microsoft')" class="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-full py-2.5 px-4 font-semibold text-gray-700 hover:bg-gray-50 transition">
-        <i class="fa-brands fa-microsoft text-blue-500 text-lg"></i> Continue with Microsoft
-      </button>
-    </div>
-
-    <p class="text-xs text-gray-500 text-center mb-4">
-      By creating an account, you accept our <a href="#" class="text-red-500 underline">Terms of Use</a> and <a href="#" class="text-red-500 underline">Privacy Policy</a>.
-    </p>
-
-    <div class="relative flex py-2 items-center mb-4">
-      <div class="flex-grow border-t border-gray-200"></div>
-      <span class="flex-shrink mx-4 text-gray-400 text-xs font-semibold">or</span>
-      <div class="flex-grow border-t border-gray-200"></div>
     </div>
 
     <!-- Alert Box -->
     <div id="auth-msg" class="hidden p-3 mb-4 text-sm rounded-lg text-center font-medium"></div>
 
-    <!-- EMAIL FORM (Shows when clicking Continue with Email) -->
-    <div id="email-section">
-      <button id="toggle-email-btn" onclick="toggleEmailForm()" class="w-full bg-red-500 text-white font-semibold py-3 rounded-full hover:bg-red-600 transition flex items-center justify-center gap-2 mb-4">
-        <i class="fa-regular fa-envelope"></i> Continue with email
-      </button>
-
-      <form id="auth-form" class="space-y-4 hidden" onsubmit="event.preventDefault();">
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Email</label>
-          <input type="email" id="email" required class="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-red-500 focus:outline-none" placeholder="Enter Email">
-        </div>
-
-        <!-- Password Field with Eye Icon -->
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Password</label>
-          <div class="relative">
-            <input type="password" id="password" required class="w-full border border-gray-300 rounded-xl p-3 pr-10 focus:ring-2 focus:ring-red-500 focus:outline-none" placeholder="Enter Password">
-            <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
-              <i id="eye-icon" class="fa-regular fa-eye"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="space-y-2 pt-2">
-          <button type="button" onclick="handleLogin()" class="w-full bg-red-500 text-white font-semibold py-2.5 rounded-full hover:bg-red-600 transition">
-            Log in
-          </button>
-          <button type="button" onclick="handleSignUp()" class="w-full bg-gray-800 text-white font-semibold py-2.5 rounded-full hover:bg-gray-900 transition">
-            Sign Up (New Account)
-          </button>
-        </div>
-      </form>
-    </div>
-
-    <!-- Trustpilot Rating -->
-    <div class="mt-6 text-center pt-4 border-t border-gray-100">
-      <div class="flex items-center justify-center gap-1 text-green-500 font-bold text-sm">
-        <i class="fa-solid fa-star"></i> Trustpilot
-        <span class="text-green-500 flex gap-0.5 ml-1">
-          <i class="fa-solid fa-square"></i>
-          <i class="fa-solid fa-square"></i>
-          <i class="fa-solid fa-square"></i>
-          <i class="fa-solid fa-square"></i>
-          <i class="fa-solid fa-square text-gray-300"></i>
-        </span>
+    <!-- AUTH FORM -->
+    <form id="auth-form" class="space-y-4" onsubmit="event.preventDefault();">
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Email Address</label>
+        <input type="email" id="email" required class="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="name@example.com">
       </div>
-      <p class="text-xs text-gray-500 mt-1">Rated "Excellent" based on 22,917 reviews</p>
+
+      <!-- Password Field with Eye Icon -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Password</label>
+        <div class="relative">
+          <input type="password" id="password" required class="w-full border border-gray-300 rounded-xl p-3 pr-10 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="••••••••">
+          <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none">
+            <i id="eye-icon" class="fa-regular fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Submit Action Button -->
+      <div class="pt-2">
+        <button id="submit-btn" type="button" onclick="handleAuth()" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition shadow-md">
+          Log In
+        </button>
+      </div>
+    </form>
+
+    <!-- Trust Badge -->
+    <div class="mt-6 text-center pt-4 border-t border-gray-100">
+      <p class="text-xs text-gray-400">Powered by Supabase & eBay Developer API</p>
     </div>
   </div>
 
   <!-- DASHBOARD CONTAINER -->
-  <div id="dashboard-container" class="hidden w-full max-w-4xl p-6 bg-white rounded-2xl shadow-xl">
+  <div id="dashboard-container" class="hidden w-full max-w-5xl p-6 bg-white rounded-2xl shadow-xl">
     <div class="flex justify-between items-center mb-6 border-b pb-4">
-      <h1 class="text-2xl font-bold">eBay Reseller Dashboard</h1>
-      <button onclick="handleLogout()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">Sign Out</button>
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">eBay-Tracer Dashboard</h1>
+        <p class="text-xs text-gray-500">Live eBay Market Products</p>
+      </div>
+      <button onclick="handleLogout()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition text-sm font-semibold">
+        Sign Out
+      </button>
     </div>
     <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <p class="text-gray-500">Loading products...</p>
+      <p class="text-gray-500">Loading synced products...</p>
     </div>
   </div>
 
   <script>
-    // Supabase Configuration
     const SUPABASE_URL = "https://doqmnxccvnmvcpneeueu.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcW1ueGNjdm5tdmNwbmVldWV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwNjI2NzUsImV4cCI6MjEwNDYzODY3NX0.gy5QA0xh_yx26AZ_0d7upHtjCClBvIv48brdRE8NMhY";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Toggle Email Form Visible
-    function toggleEmailForm() {
-      const form = document.getElementById('auth-form');
-      const btn = document.getElementById('toggle-email-btn');
-      form.classList.toggle('hidden');
-      btn.classList.add('hidden');
+    let currentMode = 'login';
+
+    function switchMode(mode) {
+      currentMode = mode;
+      const loginTab = document.getElementById('tab-login');
+      const signupTab = document.getElementById('tab-signup');
+      const submitBtn = document.getElementById('submit-btn');
+      const msgBox = document.getElementById('auth-msg');
+
+      msgBox.classList.add('hidden');
+
+      if (mode === 'login') {
+        loginTab.className = "w-1/2 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none";
+        signupTab.className = "w-1/2 py-2 font-bold text-gray-400 hover:text-blue-600 focus:outline-none";
+        submitBtn.textContent = "Log In";
+        submitBtn.className = "w-full bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition shadow-md";
+      } else {
+        signupTab.className = "w-1/2 py-2 font-bold text-green-600 border-b-2 border-green-600 focus:outline-none";
+        loginTab.className = "w-1/2 py-2 font-bold text-gray-400 hover:text-green-600 focus:outline-none";
+        submitBtn.textContent = "Create Account";
+        submitBtn.className = "w-full bg-green-600 text-white font-semibold py-3 rounded-xl hover:bg-green-700 transition shadow-md";
+      }
     }
 
-    // Eye Button Functionality
     function togglePasswordVisibility() {
-      const passwordInput = document.getElementById('password');
-      const eyeIcon = document.getElementById('eye-icon');
-      
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        eyeIcon.classList.remove('fa-eye');
-        eyeIcon.classList.add('fa-eye-slash');
+      const pwd = document.getElementById('password');
+      const icon = document.getElementById('eye-icon');
+      if (pwd.type === 'password') {
+        pwd.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
       } else {
-        passwordInput.type = 'password';
-        eyeIcon.classList.remove('fa-eye-slash');
-        eyeIcon.classList.add('fa-eye');
+        pwd.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
       }
     }
 
@@ -164,65 +154,68 @@
       msgBox.classList.remove('hidden');
     }
 
-    // Login Function
-    async function handleLogin() {
+    async function handleAuth() {
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value.trim();
 
       if (!email || !password) {
-        showMsg("Please enter email and password.", true);
+        showMsg("Please fill in both email and password.", true);
         return;
       }
 
-      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-      
-      if (error) {
-        showMsg(error.message, true);
+      if (currentMode === 'login') {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) {
+          showMsg(error.message, true);
+        } else {
+          showMsg("Login successful!", false);
+          checkUserSession();
+        }
       } else {
-        showMsg("Login successful!", false);
-        checkUserSession();
+        const { data, error } = await supabaseClient.auth.signUp({ email, password });
+        if (error) {
+          showMsg(error.message, true);
+        } else {
+          showMsg("Account created! You can now Log In.", false);
+          switchMode('login');
+        }
       }
     }
 
-    // Signup Function
-    async function handleSignUp() {
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
-
-      if (!email || !password) {
-        showMsg("Please enter email and password to Sign Up.", true);
-        return;
-      }
-
-      const { data, error } = await supabaseClient.auth.signUp({ email, password });
-
-      if (error) {
-        showMsg(error.message, true);
-      } else {
-        showMsg("Account created successfully! You can now Log in.", false);
-      }
-    }
-
-    // Social Auth Placeholder
-    async function handleSocialAuth(provider) {
-      const { data, error } = await supabaseClient.auth.signInWithOAuth({ provider: provider });
-      if (error) showMsg(error.message, true);
-    }
-
-    // Logout Function
     async function handleLogout() {
       await supabaseClient.auth.signOut();
       document.getElementById('auth-container').classList.remove('hidden');
       document.getElementById('dashboard-container').classList.add('hidden');
     }
 
-    // Session Verification
     async function checkUserSession() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
         document.getElementById('auth-container').classList.add('hidden');
         document.getElementById('dashboard-container').classList.remove('hidden');
+        loadProducts();
       }
+    }
+
+    async function loadProducts() {
+      const grid = document.getElementById('product-grid');
+      const { data: products, error } = await supabaseClient.from('products').select('*');
+
+      if (error || !products || products.length === 0) {
+        grid.innerHTML = `<p class="text-gray-500 col-span-3">No synced items found. Run your Python script in Pydroid 3 to populate eBay data.</p>`;
+        return;
+      }
+
+      grid.innerHTML = products.map(item => `
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
+          <h2 class="font-bold text-gray-800 text-base mb-2">${item.title || 'eBay Item'}</h2>
+          <div class="text-sm space-y-1 text-gray-600">
+            <p><span class="font-semibold">eBay Price:</span> $${item.ebay_price}</p>
+            <p><span class="font-semibold">Supplier Price:</span> $${item.supplier_price}</p>
+            <p class="text-green-600 font-bold"><span class="font-semibold">Profit:</span> $${item.profit}</p>
+          </div>
+        </div>
+      `).join('');
     }
 
     checkUserSession();
