@@ -50,17 +50,17 @@
       </div>
 
       <div class="flex border-b border-gray-200 mb-6">
-        <button id="tab-login" type="button" onclick="switchMode('login')" class="w-1/2 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none text-sm cursor-pointer">
+        <button id="tab-login" onclick="switchMode('login')" class="w-1/2 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none text-sm cursor-pointer">
           Sign In
         </button>
-        <button id="tab-signup" type="button" onclick="switchMode('signup')" class="w-1/2 py-2 font-bold text-gray-400 hover:text-blue-600 focus:outline-none text-sm cursor-pointer">
+        <button id="tab-signup" onclick="switchMode('signup')" class="w-1/2 py-2 font-bold text-gray-400 hover:text-blue-600 focus:outline-none text-sm cursor-pointer">
           Sign Up
         </button>
       </div>
 
       <div id="auth-msg" class="hidden p-3 mb-4 text-sm rounded-lg text-center font-medium"></div>
 
-      <div class="space-y-4">
+      <form id="auth-form" class="space-y-4" onsubmit="event.preventDefault();">
         <div>
           <label class="block text-xs font-semibold text-gray-600 mb-1">Email Address</label>
           <input type="email" id="email" required class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-gray-50" placeholder="name@example.com">
@@ -80,18 +80,18 @@
             Sign In
           </button>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 
   <!-- DASHBOARD CONTAINER (Shown after login) -->
   <div id="dashboard-container" class="hidden w-full min-h-screen flex flex-col bg-gray-50">
-    <header class="bg-white shadow-sm border-b px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+    <header class="bg-white shadow-sm border-b px-6 py-4 flex justify-between items-center">
       <div class="flex items-center gap-3">
         <span class="text-xl bg-blue-600 text-white p-2 rounded-xl shadow-md">📦</span>
         <div>
           <h1 class="font-extrabold text-gray-800 text-lg">eBay-Tracer <span class="text-xs text-blue-600 font-medium">by Arif</span></h1>
-          <p class="text-xs text-gray-500">Live Winning Market Products & Intelligence</p>
+          <p class="text-xs text-gray-500">Live Winning Market Products</p>
         </div>
       </div>
       <button onclick="handleLogout()" class="bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-red-600 transition shadow-sm cursor-pointer">
@@ -99,113 +99,50 @@
       </button>
     </header>
 
-    <!-- 3-Column Dashboard Layout -->
-    <main class="max-w-[1600px] mx-auto p-4 md:p-6 w-full flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      
-      <!-- LEFT SIDEBAR: Seller Hunter & Trending Sellers -->
-      <aside class="lg:col-span-3 space-y-6">
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-          <h3 class="font-bold text-gray-800 text-sm mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-satellite-dish text-blue-600"></i> Seller URL Hunter
-          </h3>
-          <p class="text-[11px] text-gray-500 mb-3">Extract store identifiers and active IDs from a competitor link.</p>
-          <input type="text" id="hunter-input" placeholder="Paste eBay store link..." class="w-full border border-gray-200 rounded-xl p-2.5 text-xs bg-gray-50 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <button onclick="runUrlHunter()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl text-xs transition cursor-pointer">
-            Extract Data
-          </button>
-          <div id="hunter-results" class="mt-3 hidden p-2.5 bg-gray-50 rounded-xl border border-gray-100 text-[11px] text-gray-700 space-y-1"></div>
-        </div>
-
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-          <h3 class="font-bold text-gray-800 text-sm mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-fire text-orange-500"></i> Trending Sellers
-          </h3>
-          <div id="trending-sellers-list" class="space-y-2 text-xs">
-            <p class="text-gray-400">Loading sellers...</p>
+    <main class="max-w-7xl mx-auto p-6 w-full flex-grow">
+      <!-- Filters and Sales View Switcher -->
+      <div class="mb-6 flex flex-col gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-gray-800">Product Analytics & Filters</h2>
+            <p class="text-xs text-gray-500">Filter products by date status, market, and sales metrics</p>
           </div>
-        </div>
-      </aside>
-
-      <!-- CENTER CONTENT: Analytics, Filters & Product Grid -->
-      <section class="lg:col-span-6 space-y-6 w-full">
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3">
-            <div>
-              <h2 class="text-base font-bold text-gray-800">Product Analytics & Filters</h2>
-              <p class="text-[11px] text-gray-500">Filter products by date status, market, and sales metrics</p>
-            </div>
-            
-            <div class="flex items-center gap-1 bg-gray-100 p-1 rounded-xl text-xs">
-              <button id="sales-daily" onclick="setSalesView('daily')" class="px-3 py-1.5 font-bold rounded-lg bg-white text-blue-600 shadow-sm transition cursor-pointer">Daily</button>
-              <button id="sales-weekly" onclick="setSalesView('weekly')" class="px-3 py-1.5 font-bold rounded-lg text-gray-600 hover:text-gray-900 transition cursor-pointer">Weekly</button>
-              <button id="sales-overall" onclick="setSalesView('overall')" class="px-3 py-1.5 font-bold rounded-lg text-gray-600 hover:text-gray-900 transition cursor-pointer">Overall</button>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap justify-between items-center gap-3 pt-3 border-t border-gray-100 text-xs">
-            <div class="flex items-center gap-1.5">
-              <button id="filter-all" onclick="setDateFilter('all')" class="px-2.5 py-1.5 font-bold rounded-lg bg-blue-600 text-white transition cursor-pointer">All</button>
-              <button id="filter-today" onclick="setDateFilter('today')" class="px-2.5 py-1.5 font-bold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">Today</button>
-              <button id="filter-yesterday" onclick="setDateFilter('yesterday')" class="px-2.5 py-1.5 font-bold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">Yesterday</button>
-            </div>
-
-            <div class="flex items-center gap-1 overflow-x-auto pb-1">
-              <span class="text-gray-400 font-semibold mr-1">Markets:</span>
-              <button id="market-all" onclick="setMarketFilter('all')" class="px-2.5 py-1 font-bold rounded-md bg-gray-800 text-white transition cursor-pointer">All</button>
-              <button id="market-usa" onclick="setMarketFilter('USA')" class="px-2 py-1 font-bold rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">USA</button>
-              <button id="market-uk" onclick="setMarketFilter('UK')" class="px-2 py-1 font-bold rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">UK</button>
-              <button id="market-aus" onclick="setMarketFilter('Australia')" class="px-2 py-1 font-bold rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">AUS</button>
-              <button id="market-can" onclick="setMarketFilter('Canada')" class="px-2 py-1 font-bold rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">CAN</button>
-            </div>
+          
+          <div class="flex items-center gap-1 bg-gray-100 p-1 rounded-xl text-xs">
+            <button id="sales-daily" onclick="setSalesView('daily')" class="px-3 py-1.5 font-bold rounded-lg bg-white text-blue-600 shadow-sm transition cursor-pointer">Daily</button>
+            <button id="sales-weekly" onclick="setSalesView('weekly')" class="px-3 py-1.5 font-bold rounded-lg text-gray-600 hover:text-gray-900 transition cursor-pointer">Weekly</button>
+            <button id="sales-overall" onclick="setSalesView('overall')" class="px-3 py-1.5 font-bold rounded-lg text-gray-600 hover:text-gray-900 transition cursor-pointer">Overall</button>
           </div>
         </div>
 
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <p class="text-gray-500 col-span-2 text-center py-10">Loading winning products...</p>
-        </div>
-      </section>
-
-      <!-- RIGHT SIDEBAR: Calendar & Events Tracker -->
-      <aside class="lg:col-span-3 space-y-6">
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-          <div class="flex justify-between items-center mb-3">
-            <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2">
-              <i class="fa-regular fa-calendar-days text-blue-600"></i> Events Calendar
-            </h3>
-            <div class="flex items-center gap-1">
-              <button onclick="changeMonth(-1)" class="w-6 h-6 bg-gray-100 hover:bg-gray-200 rounded text-xs font-bold cursor-pointer">&lt;</button>
-              <button onclick="changeMonth(1)" class="w-6 h-6 bg-gray-100 hover:bg-gray-200 rounded text-xs font-bold cursor-pointer">&gt;</button>
-            </div>
+        <!-- Secondary Filters Row -->
+        <div class="flex flex-wrap justify-between items-center gap-3 pt-3 border-t border-gray-100 text-xs">
+          <!-- Date Status Filters -->
+          <div class="flex items-center gap-2">
+            <button id="filter-all" onclick="setDateFilter('all')" class="px-3 py-1.5 font-bold rounded-lg bg-blue-600 text-white transition cursor-pointer">All Products</button>
+            <button id="filter-today" onclick="setDateFilter('today')" class="px-3 py-1.5 font-bold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">Today Products</button>
+            <button id="filter-yesterday" onclick="setDateFilter('yesterday')" class="px-3 py-1.5 font-bold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">Yesterday Products</button>
           </div>
 
-          <div class="grid grid-cols-4 gap-1 mb-3 bg-gray-50 p-1 rounded-xl text-[10px] font-bold text-center">
-            <button id="cal-market-all" onclick="setCalendarMarket('all')" class="py-1 rounded bg-blue-600 text-white transition cursor-pointer">All</button>
-            <button id="cal-market-usa" onclick="setCalendarMarket('USA')" class="py-1 rounded text-gray-600 hover:bg-gray-200 transition cursor-pointer">USA</button>
-            <button id="cal-market-uk" onclick="setCalendarMarket('UK')" class="py-1 rounded text-gray-600 hover:bg-gray-200 transition cursor-pointer">UK</button>
-            <button id="cal-market-aus" onclick="setCalendarMarket('Australia')" class="py-1 rounded text-gray-600 hover:bg-gray-200 transition cursor-pointer">AUS</button>
-          </div>
-
-          <div class="flex justify-between items-center bg-gray-50 p-2.5 rounded-xl mb-3 text-xs font-bold text-gray-700">
-            <span id="calendar-month-year">September 2026</span>
-            <span id="calendar-active-market" class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-[10px]">All Markets</span>
-          </div>
-
-          <div class="grid grid-cols-7 text-center text-[10px] font-bold text-gray-400 mb-1">
-            <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
-          </div>
-
-          <div id="calendar-days-grid" class="grid grid-cols-7 gap-1 text-center text-xs mb-4"></div>
-
-          <div class="border-t border-gray-100 pt-3 space-y-2">
-            <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Upcoming Events</p>
-            <div id="upcoming-events-container" class="space-y-2"></div>
+          <!-- Market Filters -->
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1">
+            <span class="text-gray-400 font-semibold mr-1">Markets:</span>
+            <button id="market-all" onclick="setMarketFilter('all')" class="px-2.5 py-1 font-bold rounded-md bg-gray-800 text-white transition cursor-pointer">All Markets</button>
+            <button id="market-usa" onclick="setMarketFilter('USA')" class="px-2.5 py-1 font-bold rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">USA</button>
+            <button id="market-uk" onclick="setMarketFilter('UK')" class="px-2.5 py-1 font-bold rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">UK</button>
+            <button id="market-aus" onclick="setMarketFilter('Australia')" class="px-2.5 py-1 font-bold rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">Australia</button>
+            <button id="market-can" onclick="setMarketFilter('Canada')" class="px-2.5 py-1 font-bold rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">Canada</button>
           </div>
         </div>
-      </aside>
+      </div>
 
+      <!-- Product Grid -->
+      <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <p class="text-gray-500 col-span-3 text-center py-10">Loading winning products...</p>
+      </div>
     </main>
 
-    <footer class="bg-white border-t text-center py-4 text-xs text-gray-500 mt-auto">
+    <footer class="bg-white border-t text-center py-4 text-xs text-gray-500">
       eBay-Tracer Dashboard &copy; 2026 | Developed for Arif
     </footer>
   </div>
@@ -219,9 +156,7 @@
     let currentSalesView = 'daily';
     let currentDateFilter = 'all';
     let currentMarketFilter = 'all';
-    let calendarMarketFilter = 'all';
     let globalProductsData = [];
-    let currentDateObj = new Date(2026, 8, 13);
 
     function switchMode(mode) {
       currentMode = mode;
@@ -325,9 +260,9 @@
       ['all', 'today', 'yesterday'].forEach(f => {
         const btn = document.getElementById(`filter-${f}`);
         if (f === filter) {
-          btn.className = "px-2.5 py-1.5 font-bold rounded-lg bg-blue-600 text-white transition cursor-pointer";
+          btn.className = "px-3 py-1.5 font-bold rounded-lg bg-blue-600 text-white transition cursor-pointer";
         } else {
-          btn.className = "px-2.5 py-1.5 font-bold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer";
+          btn.className = "px-3 py-1.5 font-bold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer";
         }
       });
       renderProducts();
@@ -348,30 +283,112 @@
       renderProducts();
     }
 
-    function setCalendarMarket(market) {
-      calendarMarketFilter = market;
-      ['all', 'usa', 'uk', 'aus'].forEach((mKey, idx) => {
-        const mName = ['all', 'USA', 'UK', 'Australia'][idx];
-        const btn = document.getElementById(`cal-market-${mKey}`);
-        if (mName === market) {
-          btn.className = "py-1 rounded bg-blue-600 text-white transition cursor-pointer";
-        } else {
-          btn.className = "py-1 rounded text-gray-600 hover:bg-gray-200 transition cursor-pointer";
-        }
-      });
-      document.getElementById('calendar-active-market').textContent = market === 'all' ? 'All Markets' : market;
-      renderCalendar();
-    }
-
     async function loadProducts() {
       const grid = document.getElementById('product-grid');
-      grid.innerHTML = '<p class="text-gray-500 col-span-2 text-center py-10">Fetching live products...</p>';
+      grid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">Fetching live products...</p>';
 
       const { data, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
 
       if (error) {
-        grid.innerHTML = `<p class="text-red-500 col-span-2 text-center py-10">Error: ${error.message}</p>`;
+        grid.innerHTML = `<p class="text-red-500 col-span-3 text-center py-10">Error: ${error.message}</p>`;
         return;
       }
 
-     
+      globalProductsData = data || [];
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById('product-grid');
+
+      let filtered = globalProductsData.filter(item => {
+        // Market filter
+        if (currentMarketFilter !== 'all' && (item.best_market || 'USA') !== currentMarketFilter) {
+          return false;
+        }
+        // Date status filter simulation based on created_at or flag
+        if (currentDateFilter === 'today') {
+          // check if item created today (or simulated)
+          const isToday = item.is_today || true; // adjustable per data
+          if (!isToday) return false;
+        } else if (currentDateFilter === 'yesterday') {
+          if (item.is_today) return false;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">No products found matching filters.</p>';
+        return;
+      }
+
+      grid.innerHTML = filtered.map(item => {
+        const title = item.title || "Untitled Product";
+        const ebayPrice = item.ebay_price ? `$${Number(item.ebay_price).toFixed(2)}` : "N/A";
+        const supplierPrice = item.supplier_price ? `$${Number(item.supplier_price).toFixed(2)}` : "N/A";
+        const profit = item.profit ? `$${Number(item.profit).toFixed(2)}` : "N/A";
+        const ebayUrl = item.ebay_url || "#";
+        const aliexpressUrl = item.aliexpress_url || item.supplier_url || "#";
+        const bestMarket = item.best_market || "Australia";
+        const competitorCount = item.competitor_count || 91973;
+
+        let salesLabel = "Daily Sales";
+        let salesValue = item.daily_sales || 4;
+        if (currentSalesView === 'weekly') {
+          salesLabel = "Weekly Sales";
+          salesValue = item.weekly_sales || 25;
+        } else if (currentSalesView === 'overall') {
+          salesLabel = "Total Sales";
+          salesValue = item.total_sales || 1050;
+        }
+
+        return `
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition">
+            <div>
+              <div class="flex justify-between items-center mb-3">
+                <span class="bg-blue-50 text-blue-700 text-xs px-2.5 py-1 rounded-full font-bold">🟢 ${bestMarket}</span>
+                <div class="flex items-center gap-2">
+                  <span class="bg-amber-50 text-amber-700 text-[10px] px-2 py-0.5 rounded font-semibold"><i class="fa-solid fa-fire mr-1"></i>Today Product</span>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center text-xs text-orange-600 font-semibold mb-2">
+                <span><i class="fa-solid fa-users mr-1"></i> Competitors: ${competitorCount}</span>
+              </div>
+
+              <h3 class="font-bold text-gray-800 text-sm mb-3 line-clamp-2">${title}</h3>
+
+              <div class="grid grid-cols-2 gap-3 mb-4 bg-gray-50 p-3 rounded-xl border border-gray-100 text-center">
+                <div class="border-r border-gray-200 pr-2 flex flex-col justify-center">
+                  <span class="text-[11px] text-gray-500 font-medium">${salesLabel}</span>
+                  <span class="font-extrabold text-blue-600 text-lg">${salesValue}</span>
+                </div>
+                <div class="flex flex-col justify-center">
+                  <span class="text-[11px] text-gray-500 font-medium">Est. Profit</span>
+                  <span class="font-extrabold text-green-600 text-lg">${profit}</span>
+                </div>
+              </div>
+
+              <div class="space-y-1 text-xs text-gray-600 mb-4">
+                <div class="flex justify-between"><span>eBay Price:</span> <span class="font-semibold text-gray-900">${ebayPrice}</span></div>
+                <div class="flex justify-between"><span>Supplier Price:</span> <span class="font-semibold text-gray-900">${supplierPrice}</span></div>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <a href="${ebayUrl}" target="_blank" class="block text-center bg-gray-900 text-white font-semibold py-2 rounded-xl hover:bg-blue-600 transition text-xs shadow-sm">
+                <i class="fa-solid fa-external-link-alt mr-1"></i> View on eBay
+              </a>
+              <a href="${aliexpressUrl}" target="_blank" class="block text-center bg-red-600 text-white font-semibold py-2 rounded-xl hover:bg-red-700 transition text-xs shadow-sm">
+                <i class="fa-solid fa-cart-shopping mr-1"></i> View on AliExpress
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    checkUserSession();
+  </script>
+</body>
+</html>
