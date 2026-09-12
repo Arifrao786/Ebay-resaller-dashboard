@@ -93,7 +93,7 @@
     <!-- Main 3-Column Grid Wrapper -->
     <main class="max-w-[1600px] mx-auto p-4 md:p-6 w-full flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       
-      <!-- LEFT SIDEBAR -->
+      <!-- LEFT SIDEBAR (Span 3) -->
       <aside class="lg:col-span-3 space-y-6">
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
           <h3 class="font-bold text-gray-800 text-sm mb-3 flex items-center gap-2">
@@ -135,7 +135,7 @@
         </div>
       </aside>
 
-      <!-- CENTER SECTION -->
+      <!-- CENTER SECTION (Span 6) -->
       <section class="lg:col-span-6 space-y-6">
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3">
@@ -143,38 +143,42 @@
               <h2 class="text-base font-bold text-gray-800">Winning Products Grid</h2>
               <p class="text-[11px] text-gray-500">Filtered analytics & sales performance</p>
             </div>
+            
+            <!-- Daily / Weekly / Overall buttons on Left/Top side -->
+            <div class="flex items-center gap-1 bg-gray-100 p-1 rounded-xl text-xs">
+              <button type="button" id="sales-daily" onclick="setSalesView('daily')" class="px-2.5 py-1 font-bold rounded-lg bg-white text-blue-600 shadow-sm transition cursor-pointer">Daily</button>
+              <button type="button" id="sales-weekly" onclick="setSalesView('weekly')" class="px-2.5 py-1 font-bold rounded-lg text-gray-600 hover:text-gray-900 transition cursor-pointer">Weekly</button>
+              <button type="button" id="sales-overall" onclick="setSalesView('overall')" class="px-2.5 py-1 font-bold rounded-lg text-gray-600 hover:text-gray-900 transition cursor-pointer">Overall</button>
+            </div>
+          </div>
+
+          <!-- Date and Market Filters -->
+          <div class="flex flex-wrap justify-between items-center gap-2 pt-3 border-t border-gray-100 text-xs">
+            <div class="flex items-center gap-1.5">
+              <button type="button" id="filter-all" onclick="setDateFilter('all')" class="px-2.5 py-1 font-bold rounded-lg bg-blue-600 text-white transition cursor-pointer">All</button>
+              <button type="button" id="filter-today" onclick="setDateFilter('today')" class="px-2.5 py-1 font-bold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">Today</button>
+              <button type="button" id="filter-yesterday" onclick="setDateFilter('yesterday')" class="px-2.5 py-1 font-bold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">Yesterday</button>
+            </div>
+
+            <!-- Market switch buttons on Right side -->
+            <div class="flex items-center gap-1">
+              <span class="text-gray-400 font-semibold mr-1">Market:</span>
+              <button type="button" id="market-all" onclick="setMarketFilter('all')" class="px-2 py-1 font-bold rounded bg-gray-800 text-white transition cursor-pointer">All</button>
+              <button type="button" id="market-usa" onclick="setMarketFilter('USA')" class="px-2 py-1 font-bold rounded bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">USA</button>
+              <button type="button" id="market-uk" onclick="setMarketFilter('UK')" class="px-2 py-1 font-bold rounded bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">UK</button>
+              <button type="button" id="market-aus" onclick="setMarketFilter('Australia')" class="px-2 py-1 font-bold rounded bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">AUS</button>
+              <button type="button" id="market-can" onclick="setMarketFilter('Canada')" class="px-2 py-1 font-bold rounded bg-gray-100 text-gray-600 hover:bg-gray-200 transition cursor-pointer">CAN</button>
+            </div>
           </div>
         </div>
 
+        <!-- Products Grid Container -->
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Sample Product Card -->
-          <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col justify-between">
-            <div>
-              <div class="flex justify-between items-center mb-2.5">
-                <span class="bg-blue-50 text-blue-700 text-[11px] px-2.5 py-0.5 rounded-full font-bold">🟢 USA</span>
-                <span class="bg-amber-50 text-amber-700 text-[10px] px-2 py-0.5 rounded font-semibold"><i class="fa-solid fa-fire mr-1"></i>Hot Item</span>
-              </div>
-              <h3 class="font-bold text-gray-800 text-xs mb-3">Automatic Pet Feeder Smart Wi-Fi Enabled HD Camera</h3>
-              <div class="grid grid-cols-2 gap-2 mb-3 bg-gray-50 p-2.5 rounded-xl border border-gray-100 text-center">
-                <div class="border-r border-gray-200 pr-1">
-                  <span class="text-[10px] text-gray-500">Daily Sales</span>
-                  <p class="font-extrabold text-blue-600 text-base">8</p>
-                </div>
-                <div>
-                  <span class="text-[10px] text-gray-500">Est. Profit</span>
-                  <p class="font-extrabold text-green-600 text-base">$32.40</p>
-                </div>
-              </div>
-            </div>
-            <div class="space-y-1.5">
-              <a href="https://ebay.com" target="_blank" class="block text-center bg-gray-900 text-white font-semibold py-2 rounded-xl hover:bg-blue-600 transition text-[11px]">View on eBay</a>
-              <a href="https://aliexpress.com" target="_blank" class="block text-center bg-red-600 text-white font-semibold py-2 rounded-xl hover:bg-red-700 transition text-[11px]">View on AliExpress</a>
-            </div>
-          </div>
+          <p class="text-gray-500 col-span-2 text-center py-10">Loading winning products...</p>
         </div>
       </section>
 
-      <!-- RIGHT SIDEBAR -->
+      <!-- RIGHT SIDEBAR (Span 3) - AI SEO & Calendar with Market Switcher -->
       <aside class="lg:col-span-3 space-y-6">
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
           <div class="flex items-center gap-3 mb-3">
@@ -188,6 +192,58 @@
             Launch AI SEO Optimizer
           </a>
         </div>
+
+        <!-- Calendar & Upcoming Events Segment -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2">
+              <i class="fa-regular fa-calendar-days text-blue-600"></i> Events Calendar
+            </h3>
+            <select id="calendar-market-switch" onchange="switchCalendarMarket(this.value)" class="bg-gray-100 border border-gray-200 text-gray-700 text-[11px] font-bold rounded-lg px-2 py-1 focus:outline-none cursor-pointer">
+              <option value="USA">USA Events</option>
+              <option value="UK">UK Events</option>
+              <option value="Australia">AUS Events</option>
+              <option value="Canada">CAN Events</option>
+            </select>
+          </div>
+
+          <div class="flex justify-between items-center bg-gray-50 p-2.5 rounded-xl mb-3 text-xs font-bold text-gray-700">
+            <span>September 2026</span>
+            <span id="calendar-market-badge" class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-[10px]">USA Market</span>
+          </div>
+
+          <div class="grid grid-cols-7 text-center text-[10px] font-bold text-gray-400 mb-1">
+            <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+          </div>
+
+          <div class="grid grid-cols-7 gap-1 text-center text-xs mb-4">
+            <span class="text-gray-300 py-1">29</span><span class="text-gray-300 py-1">30</span><span class="py-1 text-gray-700">1</span><span class="py-1 text-gray-700">2</span><span class="py-1 text-gray-700">3</span><span class="py-1 text-gray-700">4</span><span class="py-1 text-gray-700">5</span>
+            <span class="py-1 text-gray-700">6</span><span class="py-1 text-gray-700">7</span><span class="py-1 text-gray-700">8</span><span class="py-1 text-gray-700">9</span><span class="py-1 text-gray-700">10</span><span class="py-1 text-gray-700">11</span><span class="py-1 bg-blue-600 text-white rounded-lg font-bold shadow-sm">12</span>
+            <span class="py-1 text-gray-700 bg-amber-50 rounded font-semibold text-amber-700 border border-amber-200">13</span><span class="py-1 text-gray-700">14</span><span class="py-1 text-gray-700">15</span><span class="py-1 text-gray-700">16</span><span class="py-1 text-gray-700">17</span><span class="py-1 text-gray-700">18</span><span class="py-1 text-gray-700">19</span>
+            <span class="py-1 text-gray-700">20</span><span class="py-1 text-gray-700 bg-blue-50 rounded font-semibold text-blue-700 border border-blue-200">21</span><span class="py-1 text-gray-700">22</span><span class="py-1 text-gray-700">23</span><span class="py-1 text-gray-700">24</span><span class="py-1 text-gray-700">25</span><span class="py-1 text-gray-700">26</span>
+            <span class="py-1 text-gray-700">27</span><span class="py-1 text-gray-700">28</span><span class="py-1 text-gray-700">29</span><span class="py-1 text-gray-700">30</span><span class="text-gray-300 py-1">1</span><span class="text-gray-300 py-1">2</span><span class="text-gray-300 py-1">3</span>
+          </div>
+
+          <div class="border-t border-gray-100 pt-3 space-y-2.5">
+            <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Upcoming Events</p>
+            <div id="events-list" class="space-y-2 text-xs">
+              <div class="p-2 bg-blue-50/70 border border-blue-100 rounded-xl flex justify-between items-center">
+                <div>
+                  <p class="font-bold text-gray-800 text-[11px]">Fall Flash Deals Sale</p>
+                  <p class="text-[10px] text-blue-600 font-medium">Sep 13, 2026 • USA Market</p>
+                </div>
+                <span class="text-[10px] bg-blue-600 text-white px-2 py-0.5 rounded-full font-bold">Active</span>
+              </div>
+              <div class="p-2 bg-gray-50 border border-gray-100 rounded-xl flex justify-between items-center">
+                <div>
+                  <p class="font-bold text-gray-800 text-[11px]">Autumn Clearance Blitz</p>
+                  <p class="text-[10px] text-gray-500">Sep 21, 2026 • USA Market</p>
+                </div>
+                <span class="text-[10px] bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full font-bold">Upcoming</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </aside>
 
     </main>
@@ -198,7 +254,68 @@
   </div>
 
   <script>
-    console.log("eBay-Tracer script initialized successfully!");
+    let currentSalesView = 'daily';
+    let currentDateFilter = 'all';
+    let currentMarketFilter = 'all';
+
+    const fallbackProducts = [
+      {
+        title: "Automatic Pet Feeder Smart Wi-Fi Enabled HD Camera",
+        ebay_price: 68.50,
+        supplier_price: 24.20,
+        profit: 32.40,
+        ebay_url: "https://ebay.com",
+        aliexpress_url: "https://aliexpress.com",
+        best_market: "USA",
+        competitor_count: 1420,
+        daily_sales: 8,
+        weekly_sales: 54,
+        total_sales: 1250,
+        is_today: true
+      },
+      {
+        title: "Portable Cordless Mini Car Vacuum Cleaner High Power",
+        ebay_price: 34.99,
+        supplier_price: 11.50,
+        profit: 16.80,
+        ebay_url: "https://ebay.com",
+        aliexpress_url: "https://aliexpress.com",
+        best_market: "Australia",
+        competitor_count: 850,
+        daily_sales: 12,
+        weekly_sales: 82,
+        total_sales: 2100,
+        is_today: true
+      },
+      {
+        title: "Stainless Steel Electric Milk Frother Handheld Coffee Maker",
+        ebay_price: 22.99,
+        supplier_price: 6.80,
+        profit: 11.20,
+        ebay_url: "https://ebay.com",
+        aliexpress_url: "https://aliexpress.com",
+        best_market: "UK",
+        competitor_count: 3100,
+        daily_sales: 15,
+        weekly_sales: 95,
+        total_sales: 3400,
+        is_today: false
+      },
+      {
+        title: "LED Sunset Lamp Projection Romantic Ambient Night Light",
+        ebay_price: 19.99,
+        supplier_price: 4.50,
+        profit: 10.50,
+        ebay_url: "https://ebay.com",
+        aliexpress_url: "https://aliexpress.com",
+        best_market: "Canada",
+        competitor_count: 620,
+        daily_sales: 6,
+        weekly_sales: 40,
+        total_sales: 890,
+        is_today: false
+      }
+    ];
 
     function switchMode(mode) {
       const loginTab = document.getElementById('tab-login');
@@ -229,17 +346,5 @@
     }
 
     function handleAuth() {
-      console.log("Sign in clicked!");
       document.getElementById('auth-container').classList.add('hidden');
-      document.getElementById('dashboard-container').classList.remove('hidden');
-    }
-
-    function handleLogout() {
-      document.getElementById('dashboard-container').classList.add('hidden');
-      document.getElementById('auth-container').classList.remove('hidden');
-      document.getElementById('password').value = '';
-    }
-  </script>
-</body>
-</html>
-
+      document.getElementById('dashboard-container').cl
