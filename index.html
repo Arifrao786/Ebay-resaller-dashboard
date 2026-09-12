@@ -32,11 +32,11 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col justify-between overflow-x-hidden">
 
-  <!-- AUTH / LANDING CONTAINER -->
+  <!-- AUTH / LANDING CONTAINER (Wohi purana clean design) -->
   <div id="auth-container" class="relative flex items-center justify-center min-h-screen w-full overflow-hidden bg-slate-900">
     <div class="absolute inset-0 opacity-15 pointer-events-none flex flex-col justify-around py-10">
       <div class="animate-marquee flex gap-6 text-white text-lg font-bold whitespace-nowrap">
-        <span>🐾 Pet Supplies</span> • <span>🍳 Kitchen Gadgets</span> • <span>🌱 Garden Tools</span> • <span>💻 Electronics</span> • <span>👟 Fashion & Apparel</span> • <span>🏠 Home Decor</span> • <span>🛠️ Auto Parts</span> • <span>🎮 Gaming Gear</span>
+        <span>🐾 Pet Supplies</span> • <span>🍳 Kitchen Gadgets</span> • <span>🌱 Garden Tools</span> • <span>💻 Electronics</span> • <span>👟 Fashion & Apparel</span> • <span>🏠 Home Decor</span>
       </div>
     </div>
 
@@ -49,33 +49,29 @@
       </div>
 
       <div class="flex border-b border-gray-200 mb-6">
-        <button type="button" id="tab-login" onclick="switchMode('login')" class="w-1/2 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none text-sm cursor-pointer">
-          Sign In
-        </button>
-        <button type="button" id="tab-signup" onclick="switchMode('signup')" class="w-1/2 py-2 font-bold text-gray-400 hover:text-blue-600 focus:outline-none text-sm cursor-pointer">
-          Sign Up
-        </button>
+        <button type="button" id="tab-login" onclick="switchMode('login')" class="w-1/2 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none text-sm cursor-pointer">Sign In</button>
+        <button type="button" id="tab-signup" onclick="switchMode('signup')" class="w-1/2 py-2 font-bold text-gray-400 hover:text-blue-600 focus:outline-none text-sm cursor-pointer">Sign Up</button>
       </div>
 
       <div id="auth-msg" class="hidden p-3 mb-4 text-sm rounded-lg text-center font-medium"></div>
 
-      <form id="auth-form" class="space-y-4" onsubmit="event.preventDefault(); handleAuth();">
+      <form id="auth-form" class="space-y-4">
         <div>
           <label class="block text-xs font-semibold text-gray-600 mb-1">Email Address</label>
-          <input type="email" id="email" class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-gray-50" placeholder="name@example.com" value="arif@ebaytracer.com">
+          <input type="email" id="email" class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 bg-gray-50" placeholder="name@example.com" value="arif@ebaytracer.com">
         </div>
         <div>
           <label class="block text-xs font-semibold text-gray-600 mb-1">Password</label>
           <div class="relative">
-            <input type="password" id="password" class="w-full border border-gray-300 rounded-xl p-3 pr-10 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-gray-50" placeholder="••••••••" value="123456">
-            <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer">
+            <input type="password" id="password" class="w-full border border-gray-300 rounded-xl p-3 pr-10 text-sm focus:ring-2 focus:ring-blue-500 bg-gray-50" placeholder="••••••••" value="123456">
+            <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800 focus:outline-none cursor-pointer">
               <i id="eye-icon" class="fa-regular fa-eye"></i>
             </button>
           </div>
         </div>
 
         <div class="pt-2">
-          <button type="submit" id="submit-btn" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-lg text-sm cursor-pointer">
+          <button type="button" onclick="handleAuth()" id="submit-btn" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-lg text-sm cursor-pointer">
             Sign In
           </button>
         </div>
@@ -83,7 +79,7 @@
     </div>
   </div>
 
-  <!-- DASHBOARD CONTAINER (3-Column Structured Layout) -->
+  <!-- DASHBOARD CONTAINER (3-Column Layout with Dividers) -->
   <div id="dashboard-container" class="hidden w-full min-h-screen flex flex-col bg-gray-100">
     <header class="bg-white shadow-sm border-b px-6 py-4 flex justify-between items-center sticky top-0 z-50">
       <div class="flex items-center gap-3">
@@ -101,15 +97,14 @@
     <!-- Main 3-Column Grid Wrapper -->
     <main class="max-w-[1600px] mx-auto p-4 md:p-6 w-full flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       
-      <!-- LEFT SIDEBAR (Span 3 Columns): Trending Sellers & URL Hunting Extension -->
+      <!-- LEFT SIDEBAR (Span 3): Trending Sellers & URL Hunting Extension -->
       <aside class="lg:col-span-3 space-y-6">
-        <!-- Trending Sellers Box -->
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
           <h3 class="font-bold text-gray-800 text-sm mb-3 flex items-center gap-2">
             <i class="fa-solid fa-fire text-orange-500"></i> Trending Sellers
           </h3>
           <div class="space-y-3">
-            <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-xl border border-gray-100 hover:bg-blue-50/50 transition">
+            <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-xl border border-gray-100">
               <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">TS</div>
                 <div>
@@ -119,7 +114,7 @@
               </div>
               <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded">99.4%</span>
             </div>
-            <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-xl border border-gray-100 hover:bg-blue-50/50 transition">
+            <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-xl border border-gray-100">
               <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-xs">GB</div>
                 <div>
@@ -129,7 +124,7 @@
               </div>
               <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded">98.9%</span>
             </div>
-            <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-xl border border-gray-100 hover:bg-blue-50/50 transition">
+            <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-xl border border-gray-100">
               <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-xs">AU</div>
                 <div>
@@ -142,22 +137,20 @@
           </div>
         </div>
 
-        <!-- Seller URL Hunting Extension Box -->
         <div class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-5 rounded-2xl shadow-md">
           <div class="flex items-center gap-2.5 mb-3">
             <span class="bg-white/20 p-2 rounded-xl text-sm"><i class="fa-solid fa-puzzle-piece"></i></span>
             <h3 class="font-bold text-sm">URL Hunting Extension</h3>
           </div>
           <p class="text-xs text-blue-100 mb-4 leading-relaxed">Extract competitor store URLs and profitable listings instantly with our browser tool.</p>
-          <button type="button" onclick="alert('Extension tool is ready to sync with your browser store!')" class="w-full bg-white text-blue-700 font-bold py-2.5 rounded-xl text-xs hover:bg-blue-50 transition shadow cursor-pointer">
+          <button type="button" onclick="alert('Extension tool is ready to sync!')" class="w-full bg-white text-blue-700 font-bold py-2.5 rounded-xl text-xs hover:bg-blue-50 transition shadow cursor-pointer">
             <i class="fa-solid fa-download mr-1"></i> Install / Sync Extension
           </button>
         </div>
       </aside>
 
-      <!-- CENTER SECTION (Span 6 Columns): Products & Filters -->
+      <!-- CENTER SECTION (Span 6): Products Grid & Filters -->
       <section class="lg:col-span-6 space-y-6">
-        <!-- Filters & Sales Switcher -->
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3">
             <div>
@@ -172,7 +165,6 @@
             </div>
           </div>
 
-          <!-- Secondary Filters -->
           <div class="flex flex-wrap justify-between items-center gap-2 pt-3 border-t border-gray-100 text-xs">
             <div class="flex items-center gap-1.5">
               <button type="button" id="filter-all" onclick="setDateFilter('all')" class="px-2.5 py-1 font-bold rounded-lg bg-blue-600 text-white transition cursor-pointer">All</button>
@@ -191,15 +183,13 @@
           </div>
         </div>
 
-        <!-- Products 2-Column Grid inside Center -->
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <p class="text-gray-500 col-span-2 text-center py-10">Loading winning products...</p>
         </div>
       </section>
 
-      <!-- RIGHT SIDEBAR (Span 3 Columns): AI SEO Tool Link, Market Switcher & Calendar Events -->
+      <!-- RIGHT SIDEBAR (Span 3): AI SEO Tool & Market Switcher Calendar -->
       <aside class="lg:col-span-3 space-y-6">
-        <!-- AI SEO Tool Link -->
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
           <div class="flex items-center gap-3 mb-3">
             <div class="bg-purple-50 text-purple-600 p-2.5 rounded-xl text-base"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
@@ -213,13 +203,11 @@
           </a>
         </div>
 
-        <!-- Events Calendar with Market Switcher -->
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
           <div class="flex justify-between items-center mb-3">
             <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2">
               <i class="fa-regular fa-calendar-days text-blue-600"></i> Events Calendar
             </h3>
-            <!-- Market Switch Button for Calendar -->
             <select id="calendar-market-switch" onchange="switchCalendarMarket(this.value)" class="bg-gray-100 border border-gray-200 text-gray-700 text-[11px] font-bold rounded-lg px-2 py-1 focus:outline-none cursor-pointer">
               <option value="USA">USA Events</option>
               <option value="UK">UK Events</option>
@@ -228,20 +216,16 @@
             </select>
           </div>
 
-          <!-- Calendar Widget Header -->
           <div class="flex justify-between items-center bg-gray-50 p-2.5 rounded-xl mb-3 text-xs font-bold text-gray-700">
             <span>September 2026</span>
             <span id="calendar-market-badge" class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-[10px]">USA Market</span>
           </div>
 
-          <!-- Days Header -->
           <div class="grid grid-cols-7 text-center text-[10px] font-bold text-gray-400 mb-1">
             <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
           </div>
 
-          <!-- Calendar Grid Days (September 2026 starts on Tuesday) -->
-          <div id="calendar-days-grid" class="grid grid-cols-7 gap-1 text-center text-xs mb-4">
-            <!-- Dynamically populated or static calendar layout -->
+          <div class="grid grid-cols-7 gap-1 text-center text-xs mb-4">
             <span class="text-gray-300 py-1">29</span><span class="text-gray-300 py-1">30</span><span class="py-1 text-gray-700">1</span><span class="py-1 text-gray-700">2</span><span class="py-1 text-gray-700">3</span><span class="py-1 text-gray-700">4</span><span class="py-1 text-gray-700">5</span>
             <span class="py-1 text-gray-700">6</span><span class="py-1 text-gray-700">7</span><span class="py-1 text-gray-700">8</span><span class="py-1 text-gray-700">9</span><span class="py-1 text-gray-700">10</span><span class="py-1 text-gray-700">11</span><span class="py-1 bg-blue-600 text-white rounded-lg font-bold shadow-sm">12</span>
             <span class="py-1 text-gray-700 bg-amber-50 rounded font-semibold text-amber-700 border border-amber-200">13</span><span class="py-1 text-gray-700">14</span><span class="py-1 text-gray-700">15</span><span class="py-1 text-gray-700">16</span><span class="py-1 text-gray-700">17</span><span class="py-1 text-gray-700">18</span><span class="py-1 text-gray-700">19</span>
@@ -249,7 +233,6 @@
             <span class="py-1 text-gray-700">27</span><span class="py-1 text-gray-700">28</span><span class="py-1 text-gray-700">29</span><span class="py-1 text-gray-700">30</span><span class="text-gray-300 py-1">1</span><span class="text-gray-300 py-1">2</span><span class="text-gray-300 py-1">3</span>
           </div>
 
-          <!-- Upcoming Events List -->
           <div class="border-t border-gray-100 pt-3 space-y-2.5">
             <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Upcoming Events</p>
             <div id="events-list" class="space-y-2 text-xs">
@@ -284,12 +267,12 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcW1ueGNjdm5tdmNwbmVldWV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwNjI2NzUsImV4cCI6MjEwNDYzODY3NX0.gy5QA0xh_yx26AZ_0d7upHtjCClBvIv48brdRE8NMhY";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    let currentMode = 'login';
     let currentSalesView = 'daily';
     let currentDateFilter = 'all';
     let currentMarketFilter = 'all';
     let globalProductsData = [];
 
-    // Fallback product data
     const fallbackProducts = [
       {
         title: "Automatic Pet Feeder Smart Wi-Fi Enabled HD Camera",
@@ -324,4 +307,33 @@
         ebay_price: 22.99,
         supplier_price: 6.80,
         profit: 11.20,
-    
+        ebay_url: "https://ebay.com",
+        aliexpress_url: "https://aliexpress.com",
+        best_market: "UK",
+        competitor_count: 3100,
+        daily_sales: 15,
+        weekly_sales: 95,
+        total_sales: 3400,
+        is_today: false
+      },
+      {
+        title: "LED Sunset Lamp Projection Romantic Ambient Night Light",
+        ebay_price: 19.99,
+        supplier_price: 4.50,
+        profit: 10.50,
+        ebay_url: "https://ebay.com",
+        aliexpress_url: "https://aliexpress.com",
+        best_market: "Canada",
+        competitor_count: 620,
+        daily_sales: 6,
+        weekly_sales: 40,
+        total_sales: 890,
+        is_today: true
+      }
+    ];
+
+    function switchMode(mode) {
+      currentMode = mode;
+      const loginTab = document.getElementById('tab-login');
+      const signupTab = document.getElementById('tab-signup');
+      const submitBtn = document.getElementById('submit-btn')
