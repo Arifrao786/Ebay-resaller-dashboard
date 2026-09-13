@@ -6,8 +6,6 @@
   <title>eBay-Tracer by Arif - Automated Winning Product Research Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Supabase CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col font-sans">
 
@@ -35,7 +33,7 @@
     <!-- 3-Column Layout -->
     <div class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
       
-      <!-- LEFT SIDEBAR: Pro Research Tools & Trending -->
+      <!-- LEFT SIDEBAR -->
       <aside class="space-y-6">
         <!-- Pro Research Tools with Real Links -->
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
@@ -43,7 +41,7 @@
             <i class="fa-solid fa-toolbox"></i> Pro Research Tools
           </h3>
           <div id="research-tools-container" class="space-y-2 text-xs">
-            <div class="text-gray-400 text-center py-2">Loading tools...</div>
+            <!-- Populated via JS -->
           </div>
         </div>
 
@@ -94,10 +92,7 @@
 
         <!-- Dynamic Product Cards Grid -->
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="col-span-full text-center text-gray-400 py-10 bg-gray-800/50 rounded-2xl border border-gray-700">
-            <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-blue-500"></i>
-            <p class="text-xs">Loading Products data from Supabase...</p>
-          </div>
+          <!-- Populated via JS -->
         </div>
       </main>
 
@@ -130,9 +125,9 @@
           <div class="grid grid-cols-7 gap-1 text-center text-[10px] text-gray-400 font-semibold mb-2">
             <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
           </div>
-          <!-- Expanded Full Calendar Days Grid with more height & padding -->
+          <!-- Full Calendar Days Grid -->
           <div id="full-calendar-days" class="grid grid-cols-7 gap-1.5 text-center text-xs">
-            <!-- Dynamic full calendar days inserted via JS -->
+            <!-- Populated via JS -->
           </div>
         </div>
 
@@ -179,48 +174,25 @@
 
   <!-- JavaScript Application Script -->
   <script>
-    // Supabase Credentials
-    const SUPABASE_URL = 'https://doqmnxccvnmvcpneeueu.supabase.co'; 
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcW1ueGNjdm5tdmNwbmVldWV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwNjI2NzUsImV4cCI6MjEwNDYzODY3NX0.gy5QA0xh_yx26AZ_0d7upHtjCClBvIv48brdRE8NMhY'; 
-    const supabaseClient = window.supabase && SUPABASE_URL.startsWith('http') ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+    let allProductsData = [
+      { title: "Wireless Noise Cancelling Headphones", category: "Electronics", price: "45.99", competitors: 12, product_tag: "🔥 Today's Top Product", created_at: new Date().toISOString(), aliexpress_url: "https://www.aliexpress.com", ebay_url: "https://www.ebay.com", sales_daily: "55 sold", sales_weekly: "420 sold", sales_overall: "1,850 sold" },
+      { title: "Automatic Solar Garden Sprinkler", category: "Garden Tools", price: "29.50", competitors: 8, product_tag: "📦 Yesterday Product", created_at: new Date(Date.now() - 86400000).toISOString(), aliexpress_url: "https://www.aliexpress.com", ebay_url: "https://www.ebay.com", sales_daily: "34 sold", sales_weekly: "310 sold", sales_overall: "1,200 sold" },
+      { title: "Smart LED Ambient Light Bar", category: "Gaming Gear", price: "18.99", competitors: 15, product_tag: "🔥 Today's Top Product", created_at: new Date().toISOString(), aliexpress_url: "https://www.aliexpress.com", ebay_url: "https://www.ebay.com", sales_daily: "82 sold", sales_weekly: "650 sold", sales_overall: "2,400 sold" }
+    ];
 
-    let allProductsData = [];
     let currentDateFilter = 'all';
     let currentSalesMetric = 'daily';
     let currentCalDate = new Date(2026, 8, 1); // September 2026
 
     window.addEventListener('DOMContentLoaded', () => {
-      fetchProductsData();
-      fetchResearchToolsLinks();
+      renderToolsUI();
+      renderProductGrid();
       renderFullCalendar();
     });
 
-    async function fetchProductsData() {
-      const demoData = [
-        { title: "Wireless Noise Cancelling Headphones", category: "Electronics", price: "45.99", competitors: 12, product_tag: "🔥 Today's Top Product", created_at: new Date().toISOString(), aliexpress_url: "https://www.aliexpress.com", ebay_url: "https://www.ebay.com", sales_daily: "55 sold", sales_weekly: "420 sold", sales_overall: "1,850 sold" },
-        { title: "Automatic Solar Garden Sprinkler", category: "Garden Tools", price: "29.50", competitors: 8, product_tag: "📦 Yesterday Product", created_at: new Date(Date.now() - 86400000).toISOString(), aliexpress_url: "https://www.aliexpress.com", ebay_url: "https://www.ebay.com", sales_daily: "34 sold", sales_weekly: "310 sold", sales_overall: "1,200 sold" }
-      ];
-
-      if (!supabaseClient) {
-        allProductsData = demoData;
-        renderProductGrid();
-        return;
-      }
-
-      const { data, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
-      if (error || !data || data.length === 0) {
-        allProductsData = demoData;
-      } else {
-        allProductsData = data;
-      }
-      renderProductGrid();
-    }
-
-    // Pro Research Tools with complete working links
-    async function fetchResearchToolsLinks() {
+    function renderToolsUI() {
       const container = document.getElementById('research-tools-container');
-      
-      const defaultTools = [
+      const tools = [
         { tool_name: "Google Trends", tool_description: "Real-time search interest and keyword velocity", tool_link: "https://trends.google.com/" },
         { tool_name: "eBay TeraPeak", tool_description: "Official eBay past sales & pricing analytics", tool_link: "https://www.ebay.com/str/research" },
         { tool_name: "WatchCount.com", tool_description: "Find most watched items on eBay live", tool_link: "https://www.watchcount.com/" },
@@ -229,23 +201,7 @@
         { tool_name: "Similarweb Analytics", tool_description: "Analyze competitor store traffic & sources", tool_link: "https://www.similarweb.com/" }
       ];
 
-      if (!supabaseClient) {
-        renderToolsUI(defaultTools);
-        return;
-      }
-
-      const { data, error } = await supabaseClient.from('research_tools').select('*').order('id', { ascending: true });
-      if (error || !data || data.length === 0) {
-        renderToolsUI(defaultTools);
-      } else {
-        renderToolsUI(data);
-      }
-    }
-
-    function renderToolsUI(tools) {
-      const container = document.getElementById('research-tools-container');
       container.innerHTML = '';
-
       tools.forEach(tool => {
         const toolLink = document.createElement('a');
         toolLink.href = tool.tool_link;
@@ -256,7 +212,7 @@
             <span>${tool.tool_name}</span>
             <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-500 group-hover:text-blue-400"></i>
           </div>
-          <p class="text-[10px] text-gray-400 mt-0.5 truncate">${tool.tool_description || 'Click to open portal'}</p>
+          <p class="text-[10px] text-gray-400 mt-0.5 truncate">${tool.tool_description}</p>
         `;
         container.appendChild(toolLink);
       });
@@ -309,14 +265,9 @@
         return true;
       });
 
-      if (filtered.length === 0) {
-        grid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10 bg-gray-800/50 rounded-2xl border border-gray-700">No products found in products table for this filter.</div>`;
-        return;
-      }
-
       filtered.forEach(p => {
         let salesText = p.sales_daily || '25 sold';
-        if (currentSalesMetric === 'weekly') salesText = p.sales_weekly || p.sales || '210 sold';
+        if (currentSalesMetric === 'weekly') salesText = p.sales_weekly || '210 sold';
         if (currentSalesMetric === 'overall') salesText = p.sales_overall || '950 sold';
 
         const card = document.createElement('div');
@@ -324,17 +275,17 @@
         card.innerHTML = `
           <div>
             <div class="flex justify-between items-start mb-2">
-              <span class="text-[10px] bg-blue-900/50 text-blue-300 px-2 py-0.5 rounded-md font-semibold">${p.category || 'Product'}</span>
-              <span class="text-[10px] bg-green-900/50 text-green-300 px-2 py-0.5 rounded-md font-semibold">${p.product_tag || (p.created_at?.split('T')[0] === todayStr ? "🔥 Today's Top Product" : "📦 Yesterday Product")}</span>
+              <span class="text-[10px] bg-blue-900/50 text-blue-300 px-2 py-0.5 rounded-md font-semibold">${p.category}</span>
+              <span class="text-[10px] bg-green-900/50 text-green-300 px-2 py-0.5 rounded-md font-semibold">${p.product_tag}</span>
             </div>
-            <h4 class="text-sm font-bold text-white mb-1">${p.title || p.product_name || 'Winning Item'}</h4>
-            <p class="text-xs text-gray-400 mb-3">Competitors: <span class="text-yellow-400 font-bold">${p.competitors || p.competitor_count || '5'} Active Sellers</span> (${currentSalesMetric.toUpperCase()}: <span class="text-green-400 font-bold">${salesText}</span>)</p>
+            <h4 class="text-sm font-bold text-white mb-1">${p.title}</h4>
+            <p class="text-xs text-gray-400 mb-3">Competitors: <span class="text-yellow-400 font-bold">${p.competitors} Active Sellers</span> (${currentSalesMetric.toUpperCase()}: <span class="text-green-400 font-bold">${salesText}</span>)</p>
           </div>
           <div class="pt-3 border-t border-gray-700 flex items-center justify-between">
-            <span class="text-xs font-bold text-blue-400">$${p.price || '0.00'}</span>
+            <span class="text-xs font-bold text-blue-400">$${p.price}</span>
             <div class="flex gap-2">
-              <a href="${p.aliexpress_url || 'https://www.aliexpress.com'}" target="_blank" class="bg-orange-600 hover:bg-orange-700 text-white text-[10px] px-2.5 py-1.5 rounded-xl font-semibold transition">AliExpress</a>
-              <a href="${p.ebay_url || p.link || 'https://www.ebay.com'}" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] px-2.5 py-1.5 rounded-xl font-semibold transition">eBay</a>
+              <a href="${p.aliexpress_url}" target="_blank" class="bg-orange-600 hover:bg-orange-700 text-white text-[10px] px-2.5 py-1.5 rounded-xl font-semibold transition">AliExpress</a>
+              <a href="${p.ebay_url}" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] px-2.5 py-1.5 rounded-xl font-semibold transition">eBay</a>
             </div>
           </div>
         `;
@@ -342,7 +293,6 @@
       });
     }
 
-    // Full Calendar Renderer with enhanced cell padding and height
     function renderFullCalendar() {
       const year = currentCalDate.getFullYear();
       const month = currentCalDate.getMonth();
@@ -362,4 +312,33 @@
 
       const today = new Date();
       for (let day = 1; day <= totalDays; day++) {
-        const isToday = day === today.getDate() &&
+        const isToday = day === today.getDate() && month === today.getMonth() && year === currentCalDate.getFullYear();
+        const hasEvent = [15, 22].includes(day) && month === 8 && year === 2026;
+
+        let cellClass = "py-2 px-1 rounded-xl text-gray-300 bg-gray-900/40 border border-gray-800 flex flex-col items-center justify-center transition hover:bg-gray-750";
+        if (isToday) {
+          cellClass = "py-2 px-1 rounded-xl bg-blue-600 text-white font-bold shadow-md flex flex-col items-center justify-center";
+        } else if (hasEvent) {
+          cellClass = "py-2 px-1 rounded-xl bg-emerald-950/70 text-emerald-300 font-bold border border-emerald-700/60 flex flex-col items-center justify-center";
+        }
+
+        container.innerHTML += `
+          <div class="${cellClass}">
+            <span class="text-xs">${day}</span>
+            ${hasEvent ? '<span class="w-1 h-1 bg-emerald-400 rounded-full mt-0.5"></span>' : ''}
+          </div>
+        `;
+      }
+    }
+
+    function changeMonth(direction) {
+      currentCalDate.setMonth(currentCalDate.getMonth() + direction);
+      renderFullCalendar();
+    }
+
+    function switchMarket(market) {
+      alert(`Switched active market view to: ${market}.`);
+    }
+  </script>
+</body>
+</html>
