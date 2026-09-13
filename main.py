@@ -49,6 +49,8 @@ def get_ebay_token():
         response = requests.post(url, headers=headers, data=data, auth=(EBAY_CLIENT_ID.strip(), EBAY_CLIENT_SECRET.strip()))
         if response.status_code == 200:
             return response.json().get("access_token")
+        else:
+            print("Token Error Response:", response.text)
     except Exception as e:
         print("Token Error:", e)
     return None
@@ -57,7 +59,8 @@ def analyze_market_competitors(token, search_keyword):
     market_stats = {}
     for market_name, market_id in MARKETPLACES.items():
         headers = {"Authorization": f"Bearer {token}", "X-EBAY-C-MARKETPLACE-ID": market_id}
-        endpoint = f"https://api.buy.ebay.com/buy/browse/v1/item_summary/search?q={search_keyword}&limit=5"
+        # Sahi Production Endpoint yahan set kar diya gaya hai
+        endpoint = f"https://api.ebay.com/buy/browse/v1/item_summary/search?q={search_keyword}&limit=5"
         res = requests.get(endpoint, headers=headers)
         if res.status_code == 200:
             data = res.json()
@@ -109,6 +112,7 @@ def run_automation():
         "Authorization": f"Bearer {token}",
         "X-EBAY-C-MARKETPLACE-ID": MARKETPLACES.get(best_market, "EBAY_US")
     }
+    # Sahi Production Endpoint yahan bhi set kar diya gaya hai
     endpoint = f"https://api.ebay.com/buy/browse/v1/item_summary/search?q={search_keyword}&limit=10"
     response = requests.get(endpoint, headers=headers)
 
@@ -146,6 +150,8 @@ def run_automation():
             }
             save_product_to_supabase(product_data)
         print("✨ Automation completed successfully for both tables!")
+    else:
+        print("❌ Failed to fetch items from eBay API:", response.status_code, response.text)
 
 if __name__ == "__main__":
     run_automation()
