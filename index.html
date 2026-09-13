@@ -362,3 +362,49 @@
       for (let day = 1; day <= totalDays; day++) {
         const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
         const hasEvent = [15, 22].includes(day) && month =
+
+          function renderCalendar() {
+      const year = currentCalDate.getFullYear();
+      const month = currentCalDate.getMonth();
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      document.getElementById('calendar-month-title').innerText = `${monthNames[month]} ${year}`;
+
+      const container = document.getElementById('mini-calendar-days');
+      container.innerHTML = '';
+
+      const firstDayIndex = new Date(year, month, 1).getDay();
+      const totalDays = new Date(year, month + 1, 0).getDate();
+      const adjustedFirstDay = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
+
+      for (let i = 0; i < adjustedFirstDay; i++) {
+        container.innerHTML += `<div></div>`;
+      }
+
+      const today = new Date();
+      for (let day = 1; day <= totalDays; day++) {
+        const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+        // Highlight days with events
+        const hasEvent = [15, 22].includes(day) && month === 8 && year === 2026; 
+
+        let cls = "p-1 rounded-lg text-gray-300";
+        if (isToday) {
+          cls = "p-1 rounded-lg bg-blue-600 text-white font-bold";
+        } else if (hasEvent) {
+          cls = "p-1 rounded-lg bg-emerald-900/60 text-emerald-300 font-bold border border-emerald-700/50";
+        }
+
+        container.innerHTML += `<div class="${cls}">${day}</div>`;
+      }
+    }
+
+    function changeMonth(direction) {
+      currentCalDate.setMonth(currentCalDate.getMonth() + direction);
+      renderCalendar();
+    }
+
+    function switchMarket(market) {
+      alert(`Switched active market view to: ${market}. Updating database filters...`);
+    }
+  </script>
+</body>
+</html>
