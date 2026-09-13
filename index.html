@@ -342,3 +342,340 @@
   </script>
 </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ebay Dropshipping & Reseller SaaS Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-blue-600 selection:text-white">
+
+    <!-- ================= AUTHENTICATION CONTAINER ================= -->
+    <div id="auth-container" class="flex items-center justify-center min-h-screen p-4 bg-slate-900">
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+            
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-black text-white tracking-tight flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-store text-blue-500"></i> eBay Reseller Hub
+                </h1>
+                <p id="auth-subtitle" class="text-xs text-slate-400 mt-2">Sign in to access your live inventory & research tools</p>
+            </div>
+
+            <div id="error-msg" class="hidden bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-xl mb-4 text-xs font-medium"></div>
+
+            <form id="auth-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
+                    <input type="email" id="email" required placeholder="name@example.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Password</label>
+                    <div class="relative">
+                        <input type="password" id="password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition pr-10">
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition">
+                            <i id="eye-icon" class="fa-solid fa-eye text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" id="auth-btn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-blue-600/20 cursor-pointer">
+                    Sign In to Dashboard
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <button onclick="toggleAuthMode()" id="toggle-mode-btn" class="text-xs text-blue-400 hover:underline">Don't have an account? Sign Up</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MAIN DASHBOARD CONTAINER ================= -->
+    <div id="dashboard-container" class="hidden min-h-screen flex flex-col bg-slate-950">
+        <!-- Top Navbar -->
+        <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 px-6 py-3.5 flex justify-between items-center shadow-md">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600/10 border border-blue-500/20 p-2 rounded-xl text-blue-400">
+                    <i class="fa-solid fa-chart-line text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-white tracking-wide">Ebay Reseller Dashboard</h1>
+                    <p class="text-[10px] text-slate-400">Connected to Supabase Live Database</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <!-- Market Switchers Top Bar -->
+                <div class="hidden md:flex items-center bg-slate-950 border border-slate-800 rounded-xl p-1 gap-1 text-xs">
+                    <button onclick="filterMarket('ALL')" class="market-btn px-3 py-1.5 rounded-lg font-medium bg-blue-600 text-white transition">All Markets</button>
+                    <button onclick="filterMarket('USA')" class="market-btn px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white transition">USA</button>
+                    <button onclick="filterMarket('UK')" class="market-btn px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white transition">UK</button>
+                    <button onclick="filterMarket('AUS')" class="market-btn px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white transition">Australia</button>
+                </div>
+                <button onclick="handleLogout()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Body Grid Layout -->
+        <div class="flex-1 max-w-[1600px] mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+            <!-- LEFT SIDEBAR: Tools & Extensions -->
+            <aside class="space-y-6 lg:col-span-1">
+                <!-- 1. Seller URL Hunter -->
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
+                    <h3 class="font-bold text-white text-xs uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-satellite-dish text-blue-500"></i> Seller URL Hunter
+                    </h3>
+                    <p class="text-[11px] text-slate-400 mb-3">Extract store identifiers & IDs from competitor links.</p>
+                    <input type="text" id="hunter-input" placeholder="Paste eBay store link..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white mb-2 focus:outline-none focus:border-blue-500">
+                    <button onclick="runUrlHunter()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-xl text-xs transition cursor-pointer">
+                        Extract Data
+                    </button>
+                    <div id="hunter-results" class="mt-3 hidden p-2.5 bg-slate-950 rounded-xl border border-slate-800 text-[11px] text-slate-300 space-y-1"></div>
+                </div>
+
+                <!-- 2. Trending Competitor Sellers -->
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
+                    <h3 class="font-bold text-white text-xs uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-fire text-orange-500"></i> Trending Sellers
+                    </h3>
+                    <div id="trending-sellers-list" class="space-y-2.5 text-xs">
+                        <div class="flex justify-between items-center p-2 bg-slate-950 rounded-xl border border-slate-800/60">
+                            <span class="text-slate-300 font-medium">StorePro_786</span>
+                            <span class="text-green-400 font-bold">$14.2k/mo</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-slate-950 rounded-xl border border-slate-800/60">
+                            <span class="text-slate-300 font-medium">GlobalDeals_UK</span>
+                            <span class="text-green-400 font-bold">$9.8k/mo</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. AI SEO Title Generator -->
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
+                    <h3 class="font-bold text-white text-xs uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-purple-500"></i> AI SEO Title Tool
+                    </h3>
+                    <p class="text-[11px] text-slate-400 mb-3">Optimize product titles for higher visibility.</p>
+                    <input type="text" id="seo-input" placeholder="Enter basic product name..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white mb-2 focus:outline-none focus:border-purple-500">
+                    <button onclick="runAiSeoTool()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded-xl text-xs transition cursor-pointer">
+                        Generate Title
+                    </button>
+                    <div id="seo-results" class="mt-3 hidden p-2.5 bg-purple-950/20 rounded-xl border border-purple-500/20 text-[11px] text-purple-300"></div>
+                </div>
+            </aside>
+
+            <!-- CENTER COLUMN: Products Grid & Date Filters -->
+            <main class="lg:col-span-2 flex flex-col space-y-6">
+                <!-- Filters & Controls Bar -->
+                <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap justify-between items-center gap-4">
+                    <!-- Date Filters (All / Today / Yesterday) -->
+                    <div class="flex items-center gap-1.5 bg-slate-950 border border-slate-800 p-1 rounded-xl text-xs">
+                        <button onclick="filterDate('ALL')" class="date-btn px-3 py-1.5 rounded-lg font-semibold bg-blue-600 text-white transition">All Products</button>
+                        <button onclick="filterDate('TODAY')" class="date-btn px-3 py-1.5 rounded-lg font-semibold text-slate-400 hover:text-white transition">Today</button>
+                        <button onclick="filterDate('YESTERDAY')" class="date-btn px-3 py-1.5 rounded-lg font-semibold text-slate-400 hover:text-white transition">Yesterday</button>
+                    </div>
+
+                    <button onclick="loadProductsFromSupabase()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-white transition flex items-center gap-2">
+                        <i class="fa-solid fa-rotate"></i> Refresh Database
+                    </button>
+                </div>
+
+                <!-- Products Display Grid -->
+                <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="col-span-full text-center py-16 text-slate-500 text-xs">Fetching live products from Supabase...</div>
+                </div>
+            </main>
+
+            <!-- RIGHT SIDEBAR: Monthly Calendar & Event Highlights -->
+            <aside class="space-y-6 lg:col-span-1">
+                <!-- Monthly Calendar Widget -->
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 id="calendar-month-year" class="font-bold text-white text-xs uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-days text-blue-500"></i> September 2026
+                        </h3>
+                    </div>
+                    <!-- Calendar Grid Header -->
+                    <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-semibold text-slate-500 mb-2">
+                        <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+                    </div>
+                    <!-- Calendar Days Container -->
+                    <div id="calendar-days" class="grid grid-cols-7 gap-1 text-center text-xs">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                    <!-- Event Highlights Note -->
+                    <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 inline-block animate-pulse"></span>
+                        <span>Highlighted days show upcoming peak shopping events.</span>
+                    </div>
+                </div>
+
+                <!-- Live Market Notification Card -->
+                <div class="bg-gradient-to-br from-blue-900/20 to-indigo-900/20 border border-blue-500/20 p-5 rounded-2xl">
+                    <h4 class="font-bold text-blue-400 text-xs mb-1">🚀 Automated Sync Active</h4>
+                    <p class="text-[11px] text-slate-300 leading-relaxed">Your GitHub Actions sync runs daily to populate winning eBay dropshipping items straight into this database.</p>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT APP LOGIC ================= -->
+    <script>
+        // Supabase Configuration Constants
+        const SUPABASE_URL = 'https://doqmnxccvnmvcpneeueu.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcW1ueGNjdm5tdmNwbmVldWV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwNjI2NzUsImV4cCI6MjEwNDYzODY3NX0.gy5QA0xh_yx26AZ_0d7upHtjCClBvIv48brdRE8NMhY';
+        
+        const { createClient } = supabase;
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let isSignUp = false;
+        let allFetchedProducts = [];
+        let currentMarketFilter = 'ALL';
+        let currentDateFilter = 'ALL';
+
+        // Check Session on Page Load
+        async function checkUserSession() {
+            const { data: { session } } = await _supabase.auth.getSession();
+            if (session) {
+                showDashboardView();
+            } else {
+                showAuthView();
+            }
+        }
+
+        function showAuthView() {
+            document.getElementById('auth-container').classList.remove('hidden');
+            document.getElementById('dashboard-container').classList.add('hidden');
+        }
+
+        function showDashboardView() {
+            document.getElementById('auth-container').classList.add('hidden');
+            document.getElementById('dashboard-container').classList.remove('hidden');
+            loadProductsFromSupabase();
+            renderCalendar();
+        }
+
+        function toggleAuthMode() {
+            isSignUp = !isSignUp;
+            document.getElementById('auth-subtitle').innerText = isSignUp ? 'Create your reseller account' : 'Sign in to access your live inventory & research tools';
+            document.getElementById('auth-btn').innerText = isSignUp ? 'Create Account' : 'Sign In to Dashboard';
+            document.getElementById('toggle-mode-btn').innerText = isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up";
+        }
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Auth Form Listener
+        document.getElementById('auth-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error-msg');
+            errorDiv.classList.add('hidden');
+
+            let res;
+            if (isSignUp) {
+                res = await _supabase.auth.signUp({ email, password });
+            } else {
+                res = await _supabase.auth.signInWithPassword({ email, password });
+            }
+
+            if (res.error) {
+                errorDiv.innerText = res.error.message;
+                errorDiv.classList.remove('hidden');
+            } else {
+                if (isSignUp) {
+                    alert('Account created successfully! You can now log in.');
+                } else {
+                    showDashboardView();
+                }
+            }
+        });
+
+        async function handleLogout() {
+            await _supabase.auth.signOut();
+            showAuthView();
+        }
+
+        // Fetch Products from Supabase `products` table
+        async function loadProductsFromSupabase() {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = '<div class="col-span-full text-center py-16 text-slate-500 text-xs">Querying Supabase products table...</div>';
+
+            const { data, error } = await _supabase
+                .from('products')
+                .select('*')
+                .order('id', { ascending: false });
+
+            if (error) {
+                grid.innerHTML = `<div class="col-span-full text-center py-16 text-red-400 text-xs">Error loading data: ${error.message}</div>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-16 text-slate-500 text-xs">No products found in Supabase table yet. Run your GitHub workflow to sync!</div>';
+                return;
+            }
+
+            allFetchedProducts = data;
+            renderFilteredProducts();
+        }
+
+        function filterMarket(market) {
+            currentMarketFilter = market;
+            document.querySelectorAll('.market-btn').forEach(btn => {
+                btn.className = btn.innerText.toUpperCase().includes(market) || (market === 'ALL' && btn.innerText.includes('All'))
+                    ? 'market-btn px-3 py-1.5 rounded-lg font-medium bg-blue-600 text-white transition'
+                    : 'market-btn px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white transition';
+            });
+            renderFilteredProducts();
+        }
+
+        function filterDate(dateType) {
+            currentDateFilter = dateType;
+            document.querySelectorAll('.date-btn').forEach(btn => {
+                btn.className = btn.innerText.toUpperCase().includes(dateType) || (dateType === 'ALL' && btn.innerText.includes('All'))
+                    ? 'date-btn px-3 py-1.5 rounded-lg font-semibold bg-blue-600 text-white transition'
+                    : 'date-btn px-3 py-1.5 rounded-lg font-semibold text-slate-400 hover:text-white transition';
+            });
+            renderFilteredProducts();
+        }
+
+        function renderFilteredProducts() {
+            const grid = document.getElementById('products-grid');
+            let filtered = allFetchedProducts;
+
+            // Market filter logic (if market column exists)
+            if (currentMarketFilter !== 'ALL') {
+                filtered = filtered.filter(item => item.market && item.market.toUpperCase().includes(currentMarketFilter));
+            }
+
+            // Date filter simulation logic
+            const todayStr = new Date().toISOString().split('T')[0];
+            if (currentDateFilter === 'TODAY') {
+                filtered = filtered.filter(item => item.created_at && item.created_at.startsWith(todayStr));
+            } else if (currentDateFilter === 'YESTERDAY') {
+                // simple fallback filtering logic for display
+     
