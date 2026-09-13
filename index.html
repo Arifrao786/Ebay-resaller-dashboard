@@ -84,6 +84,10 @@
               <span>Top_Seller_99</span>
               <span class="text-green-400 font-semibold">+142% sales</span>
             </div>
+            <div class="p-2 bg-gray-900 rounded-xl flex justify-between items-center">
+              <span>GlobalDeals_Hub</span>
+              <span class="text-green-400 font-semibold">+98% sales</span>
+            </div>
           </div>
         </div>
 
@@ -120,12 +124,12 @@
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="col-span-full text-center text-gray-400 py-10 bg-gray-800/50 rounded-2xl border border-gray-700">
             <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-blue-500"></i>
-            <p class="text-xs">Loading Supabase products...</p>
+            <p class="text-xs">Loading Research Tool data...</p>
           </div>
         </div>
       </main>
 
-      <!-- RIGHT SIDEBAR: Market Switcher & Calendar -->
+      <!-- RIGHT SIDEBAR: Market Switcher, AI SEO, Monthly Calendar & Global Events -->
       <aside class="space-y-6">
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
           <h3 class="text-sm font-bold text-yellow-400 mb-3 flex items-center gap-2">
@@ -139,23 +143,59 @@
           </select>
         </div>
 
+        <!-- Monthly Calendar View -->
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
-          <h3 class="text-sm font-bold text-cyan-400 mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-wand-magic-sparkles"></i> AI SEO Tool
-          </h3>
-          <a href="https://chatgpt.com" target="_blank" class="block text-center w-full bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold py-2.5 rounded-xl transition shadow">
-            Launch AI Optimizer 🚀
-          </a>
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+              <i class="fa-solid fa-calendar-days"></i> <span id="calendar-month-title">September 2026</span>
+            </h3>
+            <div class="flex gap-1">
+              <button onclick="changeMonth(-1)" class="w-6 h-6 bg-gray-900 text-xs rounded text-gray-300 hover:bg-gray-700"><i class="fa-solid fa-chevron-left"></i></button>
+              <button onclick="changeMonth(1)" class="w-6 h-6 bg-gray-900 text-xs rounded text-gray-300 hover:bg-gray-700"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+          </div>
+          <!-- Mini Grid Calendar -->
+          <div class="grid grid-cols-7 gap-1 text-center text-[10px] text-gray-400 mb-1">
+            <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
+          </div>
+          <div id="mini-calendar-days" class="grid grid-cols-7 gap-1 text-center text-[11px]">
+            <!-- Dynamic calendar days inserted via JS -->
+          </div>
         </div>
 
+        <!-- All Markets Upcoming Events -->
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
-          <h3 class="text-sm font-bold text-emerald-400 mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-calendar-days"></i> Upcoming Events Calendar
+          <h3 class="text-sm font-bold text-cyan-400 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-flag"></i> All Markets Upcoming Events
           </h3>
-          <div class="space-y-2 text-xs">
+          <div class="space-y-2 text-xs max-h-48 overflow-y-auto pr-1">
+            <div class="p-2 bg-gray-900 rounded-xl border-l-4 border-blue-500">
+              <div class="flex justify-between font-bold text-white">
+                <span>US: Prime Resell Spike</span>
+                <span class="text-[10px] text-blue-400">Sep 15</span>
+              </div>
+              <span class="text-gray-400 text-[10px]">High electronics & home demand</span>
+            </div>
+            <div class="p-2 bg-gray-900 rounded-xl border-l-4 border-red-500">
+              <div class="flex justify-between font-bold text-white">
+                <span>UK: Autumn Tech Deals</span>
+                <span class="text-[10px] text-red-400">Sep 22</span>
+              </div>
+              <span class="text-gray-400 text-[10px]">Gadgets & Audio gear surge</span>
+            </div>
+            <div class="p-2 bg-gray-900 rounded-xl border-l-4 border-yellow-500">
+              <div class="flex justify-between font-bold text-white">
+                <span>AU: Spring Garden Fest</span>
+                <span class="text-[10px] text-yellow-400">Oct 01</span>
+              </div>
+              <span class="text-gray-400 text-[10px]">Outdoor & garden tools spike</span>
+            </div>
             <div class="p-2 bg-gray-900 rounded-xl border-l-4 border-emerald-500">
-              <span class="font-bold text-white block">Prime Resell Spike</span>
-              <span class="text-gray-400 text-[10px]">Sept 15, 2026 • Live Events</span>
+              <div class="flex justify-between font-bold text-white">
+                <span>CA: Fall Harvest Sale</span>
+                <span class="text-[10px] text-emerald-400">Oct 10</span>
+              </div>
+              <span class="text-gray-400 text-[10px]">Kitchen appliances & decor</span>
             </div>
           </div>
         </div>
@@ -166,14 +206,16 @@
 
   <!-- JavaScript Application Script -->
   <script>
-    const SUPABASE_URL = 'https://your-supabase-url.supabase.co'; // Aapki Supabase URL
-    const SUPABASE_KEY = 'your-supabase-anon-key'; // Aapki Supabase Key
-    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+    // Aapke Supabase Credentials (Yahan apni real URL aur Anon key daal dein)
+    const SUPABASE_URL = 'https://your-supabase-url.supabase.co'; 
+    const SUPABASE_KEY = 'your-supabase-anon-key'; 
+    const supabaseClient = window.supabase && SUPABASE_URL.startsWith('http') ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
     let currentMode = 'login';
     let allProductsData = [];
     let currentDateFilter = 'all';
     let currentSalesMetric = 'daily';
+    let currentCalDate = new Date(2026, 8, 1); // September 2026
 
     function switchMode(mode) {
       currentMode = mode;
@@ -187,10 +229,10 @@
       const password = document.getElementById('password').value.trim();
       if (!email || !password) return;
 
-      // Successful login/signup simulation & direct open
       document.getElementById('auth-container').classList.add('hidden');
       document.getElementById('dashboard-container').classList.remove('hidden');
-      fetchProductsFromSupabase();
+      fetchResearchToolData();
+      renderCalendar();
     }
 
     function handleSignOut() {
@@ -198,23 +240,28 @@
       document.getElementById('auth-container').classList.remove('hidden');
     }
 
-    async function fetchProductsFromSupabase() {
+    async function fetchResearchToolData() {
+      // Fallback demo data agar Supabase credentials configured na hon
+      const demoData = [
+        { title: "Wireless Noise Cancelling Headphones", category: "Electronics", price: "45.99", competitors: 12, product_tag: "🔥 Today's Top Product", created_at: new Date().toISOString(), aliexpress_url: "https://www.aliexpress.com", ebay_url: "https://www.ebay.com", sales_daily: "55 sold", sales_weekly: "420 sold", sales_overall: "1,850 sold" },
+        { title: "Automatic Solar Garden Sprinkler", category: "Garden Tools", price: "29.50", competitors: 8, product_tag: "📦 Yesterday Product", created_at: new Date(Date.now() - 86400000).toISOString(), aliexpress_url: "https://www.aliexpress.com", ebay_url: "https://www.ebay.com", sales_daily: "34 sold", sales_weekly: "310 sold", sales_overall: "1,200 sold" },
+        { title: "Smart LED Ambient Light Bar", category: "Gaming Gear", price: "18.99", competitors: 15, product_tag: "🔥 Today's Top Product", created_at: new Date().toISOString(), aliexpress_url: "https://www.aliexpress.com", ebay_url: "https://www.ebay.com", sales_daily: "82 sold", sales_weekly: "650 sold", sales_overall: "2,400 sold" }
+      ];
+
       if (!supabaseClient) {
-        // Fallback demo data if client is not fully initialized yet
-        allProductsData = [
-          { title: "Wireless Noise Cancelling Headphones", category: "Electronics", price: "45.99", competitors: 12, product_tag: "🔥 Today's Top Product", created_at: new Date().toISOString(), aliexpress_url: "https://www.aliexpress.com", ebay_url: "https://www.ebay.com", sales_daily: "55 sold", sales_weekly: "420 sold", sales_overall: "1,850 sold" },
-          { title: "Automatic Solar Garden Sprinkler", category: "Garden Tools", price: "29.50", competitors: 8, product_tag: "📦 Yesterday Product", created_at: new Date(Date.now() - 86400000).toISOString(), aliexpress_url: "https://www.aliexpress.com", ebay_url: "https://www.ebay.com", sales_daily: "34 sold", sales_weekly: "310 sold", sales_overall: "1,200 sold" }
-        ];
+        allProductsData = demoData;
         renderProductGrid();
         return;
       }
 
-      const { data, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
-      if (error) {
-        console.error('Supabase Error:', error);
-        return;
+      // Fetching from 'research_tool' table as requested
+      const { data, error } = await supabaseClient.from('research_tool').select('*').order('created_at', { ascending: false });
+      if (error || !data || data.length === 0) {
+        console.warn('Using fallback demo data due to fetch error or empty table:', error);
+        allProductsData = demoData;
+      } else {
+        allProductsData = data;
       }
-      allProductsData = data || [];
       renderProductGrid();
     }
 
@@ -266,7 +313,7 @@
       });
 
       if (filtered.length === 0) {
-        grid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10 bg-gray-800/50 rounded-2xl border border-gray-700">No products found for this filter.</div>`;
+        grid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10 bg-gray-800/50 rounded-2xl border border-gray-700">No products found in research_tool table for this filter.</div>`;
         return;
       }
 
@@ -298,9 +345,6 @@
       });
     }
 
-    function switchMarket(market) {
-      console.log("Switched to market: " + market);
-    }
-  </script>
-</body>
-</html>
+    function renderCalendar() {
+      const year = currentCalDate.getFullYear();
+      con
