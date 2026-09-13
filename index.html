@@ -37,6 +37,16 @@
       
       <!-- LEFT SIDEBAR -->
       <aside class="space-y-6">
+        <!-- Pro Research Tools from Supabase (New Added Section) -->
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
+          <h3 class="text-sm font-bold text-emerald-400 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-toolbox"></i> Pro Research Tools
+          </h3>
+          <div id="research-tools-container" class="space-y-2 text-xs">
+            <div class="text-gray-400 text-center py-2">Loading tools from database...</div>
+          </div>
+        </div>
+
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
           <h3 class="text-sm font-bold text-blue-400 mb-3 flex items-center gap-2">
             <i class="fa-solid fa-fire"></i> Trending Sellers & URLs
@@ -178,9 +188,10 @@
     let currentSalesMetric = 'daily';
     let currentCalDate = new Date(2026, 8, 1); // September 2026
 
-    // Page Load hote hi direct data fetch aur calendar render hoga
+    // Page Load hote hi data fetch aur calendar render hoga
     window.addEventListener('DOMContentLoaded', () => {
       fetchResearchToolData();
+      fetchResearchToolsLinks(); // New table se links fetch karega
       renderCalendar();
     });
 
@@ -197,7 +208,6 @@
         return;
       }
 
-      // Fetching from 'research_tool' table directly
       const { data, error } = await supabaseClient.from('research_tool').select('*').order('created_at', { ascending: false });
       if (error || !data || data.length === 0) {
         allProductsData = demoData;
@@ -205,6 +215,50 @@
         allProductsData = data;
       }
       renderProductGrid();
+    }
+
+    // Supabase ki 'research_tools' table se tools fetch karne ka function
+    async function fetchResearchToolsLinks() {
+      const container = document.getElementById('research-tools-container');
+      
+      const demoTools = [
+        { tool_name: "Google Trends", tool_description: "Real-time search trends and past 24 hours stats", tool_link: "https://trends.google.com/" },
+        { tool_name: "eBay TeraPeak", tool_description: "Extracting past sales, average selling price", tool_link: "https://www.ebay.com/str/research" },
+        { tool_name: "WatchCount.com", tool_description: "Tracking which products users are putting on watch", tool_link: "https://www.watchcount.com/" },
+        { tool_name: "KeywordTool.io", tool_description: "Extracting real search queries, long-tail tags", tool_link: "https://keywordtool.io/" }
+      ];
+
+      if (!supabaseClient) {
+        renderToolsUI(demoTools);
+        return;
+      }
+
+      const { data, error } = await supabaseClient.from('research_tools').select('*').order('id', { ascending: true });
+      if (error || !data || data.length === 0) {
+        renderToolsUI(demoTools);
+      } else {
+        renderToolsUI(data);
+      }
+    }
+
+    function renderToolsUI(tools) {
+      const container = document.getElementById('research-tools-container');
+      container.innerHTML = '';
+
+      tools.forEach(tool => {
+        const toolLink = document.createElement('a');
+        toolLink.href = tool.tool_link;
+        toolLink.target = "_blank"; // Direct official website par redirect karega naye tab mein
+        toolLink.className = "block p-2.5 bg-gray-900 hover:bg-gray-750 border border-gray-700/60 rounded-xl transition group cursor-pointer mb-2";
+        toolLink.innerHTML = `
+          <div class="flex items-center justify-between font-bold text-white group-hover:text-blue-400">
+            <span>${tool.tool_name}</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-500 group-hover:text-blue-400"></i>
+          </div>
+          <p class="text-[10px] text-gray-400 mt-0.5 truncate">${tool.tool_description || 'Click to open portal'}</p>
+        `;
+        container.appendChild(toolLink);
+      });
     }
 
     function filterProductsByDate(filter) {
@@ -307,24 +361,4 @@
       const today = new Date();
       for (let day = 1; day <= totalDays; day++) {
         const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
-        const hasEvent = [15, 22].includes(day) && month === 8;
-        
-        let cls = "py-1 rounded text-gray-300";
-        if (isToday) cls = "py-1 rounded bg-blue-600 text-white font-bold";
-        else if (hasEvent) cls = "py-1 rounded bg-yellow-500/20 text-yellow-400 font-bold border border-yellow-500/40";
-
-        container.innerHTML += `<div class="${cls}">${day}</div>`;
-      }
-    }
-
-    function changeMonth(direction) {
-      currentCalDate.setMonth(currentCalDate.getMonth() + direction);
-      renderCalendar();
-    }
-
-    function switchMarket(market) {
-      console.log("Switched to market: " + market);
-    }
-  </script>
-</body>
-</html>
+        const hasEvent = [15, 22].includes(day) && month =
