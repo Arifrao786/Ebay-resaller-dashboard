@@ -11,7 +11,7 @@
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col font-sans">
 
-  <!-- MAIN DASHBOARD (Directly Visible - No Authentication) -->
+  <!-- MAIN DASHBOARD -->
   <div id="dashboard-container" class="flex flex-col min-h-screen">
     
     <!-- Navbar -->
@@ -35,15 +35,15 @@
     <!-- 3-Column Layout -->
     <div class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
       
-      <!-- LEFT SIDEBAR -->
+      <!-- LEFT SIDEBAR: Pro Research Tools & Trending -->
       <aside class="space-y-6">
-        <!-- Pro Research Tools from Supabase (New Added Section) -->
+        <!-- Pro Research Tools with Real Links -->
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
           <h3 class="text-sm font-bold text-emerald-400 mb-3 flex items-center gap-2">
             <i class="fa-solid fa-toolbox"></i> Pro Research Tools
           </h3>
           <div id="research-tools-container" class="space-y-2 text-xs">
-            <div class="text-gray-400 text-center py-2">Loading tools from database...</div>
+            <div class="text-gray-400 text-center py-2">Loading tools...</div>
           </div>
         </div>
 
@@ -96,12 +96,12 @@
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="col-span-full text-center text-gray-400 py-10 bg-gray-800/50 rounded-2xl border border-gray-700">
             <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-blue-500"></i>
-            <p class="text-xs">Loading Research Tool data from Supabase...</p>
+            <p class="text-xs">Loading Products data from Supabase...</p>
           </div>
         </div>
       </main>
 
-      <!-- RIGHT SIDEBAR: Market Switcher, AI SEO, Monthly Calendar & Global Events -->
+      <!-- RIGHT SIDEBAR: Market Switcher, Full Calendar & Global Events -->
       <aside class="space-y-6">
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
           <h3 class="text-sm font-bold text-yellow-400 mb-3 flex items-center gap-2">
@@ -115,23 +115,24 @@
           </select>
         </div>
 
-        <!-- Monthly Calendar View -->
+        <!-- Full Monthly Calendar View -->
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
           <div class="flex justify-between items-center mb-3">
             <h3 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
               <i class="fa-solid fa-calendar-days"></i> <span id="calendar-month-title">September 2026</span>
             </h3>
             <div class="flex gap-1">
-              <button onclick="changeMonth(-1)" class="w-6 h-6 bg-gray-900 text-xs rounded text-gray-300 hover:bg-gray-700 cursor-pointer"><i class="fa-solid fa-chevron-left"></i></button>
-              <button onclick="changeMonth(1)" class="w-6 h-6 bg-gray-900 text-xs rounded text-gray-300 hover:bg-gray-700 cursor-pointer"><i class="fa-solid fa-chevron-right"></i></button>
+              <button onclick="changeMonth(-1)" class="w-7 h-7 bg-gray-900 text-xs rounded-lg text-gray-300 hover:bg-gray-700 cursor-pointer flex items-center justify-center"><i class="fa-solid fa-chevron-left"></i></button>
+              <button onclick="changeMonth(1)" class="w-7 h-7 bg-gray-900 text-xs rounded-lg text-gray-300 hover:bg-gray-700 cursor-pointer flex items-center justify-center"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
           </div>
-          <!-- Mini Grid Calendar -->
-          <div class="grid grid-cols-7 gap-1 text-center text-[10px] text-gray-400 mb-1">
+          <!-- Full Grid Calendar Headers -->
+          <div class="grid grid-cols-7 gap-1 text-center text-[10px] text-gray-400 font-semibold mb-2">
             <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
           </div>
-          <div id="mini-calendar-days" class="grid grid-cols-7 gap-1 text-center text-[11px]">
-            <!-- Dynamic calendar days inserted via JS -->
+          <!-- Expanded Full Calendar Days Grid with more height & padding -->
+          <div id="full-calendar-days" class="grid grid-cols-7 gap-1.5 text-center text-xs">
+            <!-- Dynamic full calendar days inserted via JS -->
           </div>
         </div>
 
@@ -178,9 +179,9 @@
 
   <!-- JavaScript Application Script -->
   <script>
-    // Supabase Credentials (Yahan apni real Supabase URL aur Anon Key put karein)
-    const SUPABASE_URL = 'https://your-supabase-url.supabase.co'; 
-    const SUPABASE_KEY = 'your-supabase-anon-key'; 
+    // Supabase Credentials
+    const SUPABASE_URL = 'https://doqmnxccvnmvcpneeueu.supabase.co'; 
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcW1ueGNjdm5tdmNwbmVldWV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwNjI2NzUsImV4cCI6MjEwNDYzODY3NX0.gy5QA0xh_yx26AZ_0d7upHtjCClBvIv48brdRE8NMhY'; 
     const supabaseClient = window.supabase && SUPABASE_URL.startsWith('http') ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
     let allProductsData = [];
@@ -188,18 +189,16 @@
     let currentSalesMetric = 'daily';
     let currentCalDate = new Date(2026, 8, 1); // September 2026
 
-    // Page Load hote hi data fetch aur calendar render hoga
     window.addEventListener('DOMContentLoaded', () => {
-      fetchResearchToolData();
-      fetchResearchToolsLinks(); // New table se links fetch karega
-      renderCalendar();
+      fetchProductsData();
+      fetchResearchToolsLinks();
+      renderFullCalendar();
     });
 
-    async function fetchResearchToolData() {
+    async function fetchProductsData() {
       const demoData = [
         { title: "Wireless Noise Cancelling Headphones", category: "Electronics", price: "45.99", competitors: 12, product_tag: "🔥 Today's Top Product", created_at: new Date().toISOString(), aliexpress_url: "https://www.aliexpress.com", ebay_url: "https://www.ebay.com", sales_daily: "55 sold", sales_weekly: "420 sold", sales_overall: "1,850 sold" },
-        { title: "Automatic Solar Garden Sprinkler", category: "Garden Tools", price: "29.50", competitors: 8, product_tag: "📦 Yesterday Product", created_at: new Date(Date.now() - 86400000).toISOString(), aliexpress_url: "https://www.aliexpress.com", ebay_url: "https://www.ebay.com", sales_daily: "34 sold", sales_weekly: "310 sold", sales_overall: "1,200 sold" },
-        { title: "Smart LED Ambient Light Bar", category: "Gaming Gear", price: "18.99", competitors: 15, product_tag: "🔥 Today's Top Product", created_at: new Date().toISOString(), aliexpress_url: "https://www.aliexpress.com", ebay_url: "https://www.ebay.com", sales_daily: "82 sold", sales_weekly: "650 sold", sales_overall: "2,400 sold" }
+        { title: "Automatic Solar Garden Sprinkler", category: "Garden Tools", price: "29.50", competitors: 8, product_tag: "📦 Yesterday Product", created_at: new Date(Date.now() - 86400000).toISOString(), aliexpress_url: "https://www.aliexpress.com", ebay_url: "https://www.ebay.com", sales_daily: "34 sold", sales_weekly: "310 sold", sales_overall: "1,200 sold" }
       ];
 
       if (!supabaseClient) {
@@ -208,7 +207,7 @@
         return;
       }
 
-      const { data, error } = await supabaseClient.from('research_tool').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
       if (error || !data || data.length === 0) {
         allProductsData = demoData;
       } else {
@@ -217,25 +216,27 @@
       renderProductGrid();
     }
 
-    // Supabase ki 'research_tools' table se tools fetch karne ka function
+    // Pro Research Tools with complete working links
     async function fetchResearchToolsLinks() {
       const container = document.getElementById('research-tools-container');
       
-      const demoTools = [
-        { tool_name: "Google Trends", tool_description: "Real-time search trends and past 24 hours stats", tool_link: "https://trends.google.com/" },
-        { tool_name: "eBay TeraPeak", tool_description: "Extracting past sales, average selling price", tool_link: "https://www.ebay.com/str/research" },
-        { tool_name: "WatchCount.com", tool_description: "Tracking which products users are putting on watch", tool_link: "https://www.watchcount.com/" },
-        { tool_name: "KeywordTool.io", tool_description: "Extracting real search queries, long-tail tags", tool_link: "https://keywordtool.io/" }
+      const defaultTools = [
+        { tool_name: "Google Trends", tool_description: "Real-time search interest and keyword velocity", tool_link: "https://trends.google.com/" },
+        { tool_name: "eBay TeraPeak", tool_description: "Official eBay past sales & pricing analytics", tool_link: "https://www.ebay.com/str/research" },
+        { tool_name: "WatchCount.com", tool_description: "Find most watched items on eBay live", tool_link: "https://www.watchcount.com/" },
+        { tool_name: "KeywordTool.io", tool_description: "Extract high-volume long-tail search tags", tool_link: "https://keywordtool.io/" },
+        { tool_name: "AliExpress Dropshipping", tool_description: "Source cheap winning items with fast shipping", tool_link: "https://www.aliexpress.com/" },
+        { tool_name: "Similarweb Analytics", tool_description: "Analyze competitor store traffic & sources", tool_link: "https://www.similarweb.com/" }
       ];
 
       if (!supabaseClient) {
-        renderToolsUI(demoTools);
+        renderToolsUI(defaultTools);
         return;
       }
 
       const { data, error } = await supabaseClient.from('research_tools').select('*').order('id', { ascending: true });
       if (error || !data || data.length === 0) {
-        renderToolsUI(demoTools);
+        renderToolsUI(defaultTools);
       } else {
         renderToolsUI(data);
       }
@@ -248,8 +249,8 @@
       tools.forEach(tool => {
         const toolLink = document.createElement('a');
         toolLink.href = tool.tool_link;
-        toolLink.target = "_blank"; // Direct official website par redirect karega naye tab mein
-        toolLink.className = "block p-2.5 bg-gray-900 hover:bg-gray-750 border border-gray-700/60 rounded-xl transition group cursor-pointer mb-2";
+        toolLink.target = "_blank";
+        toolLink.className = "block p-2.5 bg-gray-900 hover:bg-gray-750 border border-gray-700/60 rounded-xl transition group cursor-pointer mb-2 shadow-sm";
         toolLink.innerHTML = `
           <div class="flex items-center justify-between font-bold text-white group-hover:text-blue-400">
             <span>${tool.tool_name}</span>
@@ -309,7 +310,7 @@
       });
 
       if (filtered.length === 0) {
-        grid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10 bg-gray-800/50 rounded-2xl border border-gray-700">No products found in research_tool table for this filter.</div>`;
+        grid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10 bg-gray-800/50 rounded-2xl border border-gray-700">No products found in products table for this filter.</div>`;
         return;
       }
 
@@ -341,13 +342,14 @@
       });
     }
 
-    function renderCalendar() {
+    // Full Calendar Renderer with enhanced cell padding and height
+    function renderFullCalendar() {
       const year = currentCalDate.getFullYear();
       const month = currentCalDate.getMonth();
       const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
       document.getElementById('calendar-month-title').innerText = `${monthNames[month]} ${year}`;
 
-      const container = document.getElementById('mini-calendar-days');
+      const container = document.getElementById('full-calendar-days');
       container.innerHTML = '';
 
       const firstDayIndex = new Date(year, month, 1).getDay();
@@ -355,56 +357,9 @@
       const adjustedFirstDay = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
 
       for (let i = 0; i < adjustedFirstDay; i++) {
-        container.innerHTML += `<div></div>`;
+        container.innerHTML += `<div class="p-2"></div>`;
       }
 
       const today = new Date();
       for (let day = 1; day <= totalDays; day++) {
-        const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
-        const hasEvent = [15, 22].includes(day) && month =
-
-          function renderCalendar() {
-      const year = currentCalDate.getFullYear();
-      const month = currentCalDate.getMonth();
-      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-      document.getElementById('calendar-month-title').innerText = `${monthNames[month]} ${year}`;
-
-      const container = document.getElementById('mini-calendar-days');
-      container.innerHTML = '';
-
-      const firstDayIndex = new Date(year, month, 1).getDay();
-      const totalDays = new Date(year, month + 1, 0).getDate();
-      const adjustedFirstDay = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
-
-      for (let i = 0; i < adjustedFirstDay; i++) {
-        container.innerHTML += `<div></div>`;
-      }
-
-      const today = new Date();
-      for (let day = 1; day <= totalDays; day++) {
-        const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
-        // Highlight days with events
-        const hasEvent = [15, 22].includes(day) && month === 8 && year === 2026; 
-
-        let cls = "p-1 rounded-lg text-gray-300";
-        if (isToday) {
-          cls = "p-1 rounded-lg bg-blue-600 text-white font-bold";
-        } else if (hasEvent) {
-          cls = "p-1 rounded-lg bg-emerald-900/60 text-emerald-300 font-bold border border-emerald-700/50";
-        }
-
-        container.innerHTML += `<div class="${cls}">${day}</div>`;
-      }
-    }
-
-    function changeMonth(direction) {
-      currentCalDate.setMonth(currentCalDate.getMonth() + direction);
-      renderCalendar();
-    }
-
-    function switchMarket(market) {
-      alert(`Switched active market view to: ${market}. Updating database filters...`);
-    }
-  </script>
-</body>
-</html>
+        const isToday = day === today.getDate() &&
