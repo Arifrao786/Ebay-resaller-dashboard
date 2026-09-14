@@ -26,7 +26,7 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
-        <button onclick="handleGoogleLogin()" class="bg-white hover:bg-gray-100 text-gray-800 text-xs font-bold px-4 py-2 rounded-xl transition shadow cursor-pointer flex items-center gap-2 border border-gray-300">
+        <button onclick="window.handleGoogleLogin()" class="bg-white hover:bg-gray-100 text-gray-800 text-xs font-bold px-4 py-2 rounded-xl transition shadow cursor-pointer flex items-center gap-2 border border-gray-300">
           <i class="fa-brands fa-google text-red-500"></i> Continue with Google
         </button>
       </div>
@@ -69,14 +69,14 @@
       <main class="lg:col-span-2 space-y-4">
         <div class="bg-gray-800 border border-gray-700 p-3 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow">
           <div class="flex gap-1.5">
-            <button onclick="filterProductsByDate('all')" id="date-all" class="px-3 py-1.5 bg-blue-600 text-white text-[11px] font-bold rounded-xl transition cursor-pointer">All</button>
-            <button onclick="filterProductsByDate('today')" id="date-today" class="px-3 py-1.5 bg-gray-700 text-gray-300 text-[11px] font-bold rounded-xl transition cursor-pointer">Today Products</button>
-            <button onclick="filterProductsByDate('yesterday')" id="date-yesterday" class="px-3 py-1.5 bg-gray-700 text-gray-300 text-[11px] font-bold rounded-xl transition cursor-pointer">Yesterday Products</button>
+            <button onclick="window.filterProductsByDate('all')" id="date-all" class="px-3 py-1.5 bg-blue-600 text-white text-[11px] font-bold rounded-xl transition cursor-pointer">All</button>
+            <button onclick="window.filterProductsByDate('today')" id="date-today" class="px-3 py-1.5 bg-gray-700 text-gray-300 text-[11px] font-bold rounded-xl transition cursor-pointer">Today Products</button>
+            <button onclick="window.filterProductsByDate('yesterday')" id="date-yesterday" class="px-3 py-1.5 bg-gray-700 text-gray-300 text-[11px] font-bold rounded-xl transition cursor-pointer">Yesterday Products</button>
           </div>
           <div class="flex gap-1.5">
-            <button onclick="switchSalesView('daily')" id="btn-daily" class="px-2.5 py-1.5 bg-blue-600 text-white text-[11px] font-bold rounded-xl cursor-pointer">Daily</button>
-            <button onclick="switchSalesView('weekly')" id="btn-weekly" class="px-2.5 py-1.5 bg-gray-700 text-gray-300 text-[11px] font-bold rounded-xl cursor-pointer">Weekly</button>
-            <button onclick="switchSalesView('overall')" id="btn-overall" class="px-2.5 py-1.5 bg-gray-700 text-gray-300 text-[11px] font-bold rounded-xl cursor-pointer">Overall</button>
+            <button onclick="window.switchSalesView('daily')" id="btn-daily" class="px-2.5 py-1.5 bg-blue-600 text-white text-[11px] font-bold rounded-xl cursor-pointer">Daily</button>
+            <button onclick="window.switchSalesView('weekly')" id="btn-weekly" class="px-2.5 py-1.5 bg-gray-700 text-gray-300 text-[11px] font-bold rounded-xl cursor-pointer">Weekly</button>
+            <button onclick="window.switchSalesView('overall')" id="btn-overall" class="px-2.5 py-1.5 bg-gray-700 text-gray-300 text-[11px] font-bold rounded-xl cursor-pointer">Overall</button>
           </div>
         </div>
 
@@ -94,7 +94,7 @@
           <h3 class="text-sm font-bold text-yellow-400 mb-3 flex items-center gap-2">
             <i class="fa-solid fa-globe"></i> Market Switcher
           </h3>
-          <select id="market-selector" onchange="switchMarket(this.value)" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-xs text-white focus:outline-none cursor-pointer">
+          <select id="market-selector" onchange="window.switchMarket(this.value)" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-xs text-white focus:outline-none cursor-pointer">
             <option value="ALL">All Markets</option>
             <option value="US">🇺🇸 United States (USA)</option>
             <option value="UK">🇬🇧 United Kingdom (UK)</option>
@@ -149,7 +149,7 @@
       fetchAllData();
     });
 
-    async function handleGoogleLogin() {
+    window.handleGoogleLogin = async function() {
       if (!supabaseClient) {
         alert("Supabase client not initialized.");
         return;
@@ -163,7 +163,7 @@
       if (error) {
         alert("Google Login Error: " + error.message);
       }
-    }
+    };
 
     async function fetchAllData() {
       if (!supabaseClient) {
@@ -172,7 +172,7 @@
       }
 
       try {
-        // 1. Fetch Products including new columns: ai_seo_tool_link, upcoming_event, seller_url, trending_seller, event_date
+        // 1. Fetch Products
         const { data: prodData, error: prodError } = await supabaseClient.from('products').select('*');
         if (prodError) {
           console.error("Products fetch error:", prodError.message);
@@ -203,6 +203,8 @@
       const sellersList = document.getElementById('trending-sellers-list');
       const extensionsList = document.getElementById('hunting-extensions-list');
       const aiContainer = document.getElementById('ai-seo-container');
+
+      if (!sellersList || !extensionsList || !aiContainer) return;
 
       sellersList.innerHTML = '';
       extensionsList.innerHTML = '';
@@ -250,6 +252,8 @@
 
     function renderResearchTools() {
       const container = document.getElementById('research-tools-container');
+      if (!container) return;
+
       if (allResearchTools.length === 0) {
         container.innerHTML = `<div class="text-gray-500 text-center py-2 text-xs">No research tools found in DB.</div>`;
         return;
@@ -269,10 +273,11 @@
       });
     }
 
-    function filterProductsByDate(filter) {
+    window.filterProductsByDate = function(filter) {
       currentDateFilter = filter;
       ['all', 'today', 'yesterday'].forEach(f => {
         const btn = document.getElementById(`date-${f}`);
+        if (!btn) return;
         if (f === filter) {
           btn.className = "px-3 py-1.5 bg-blue-600 text-white text-[11px] font-bold rounded-xl transition cursor-pointer";
         } else {
@@ -280,12 +285,13 @@
         }
       });
       renderProductGrid();
-    }
+    };
 
-    function switchSalesView(metric) {
+    window.switchSalesView = function(metric) {
       currentSalesMetric = metric;
       ['daily', 'weekly', 'overall'].forEach(m => {
         const btn = document.getElementById(`btn-${m}`);
+        if (!btn) return;
         if (m === metric) {
           btn.className = "px-2.5 py-1.5 bg-blue-600 text-white text-[11px] font-bold rounded-xl cursor-pointer";
         } else {
@@ -293,17 +299,19 @@
         }
       });
       renderProductGrid();
-    }
+    };
 
-    function switchMarket(market) {
+    window.switchMarket = function(market) {
       currentMarket = market;
-      document.getElementById('cal-market-label').innerText = market;
+      const label = document.getElementById('cal-market-label');
+      if (label) label.innerText = market;
       renderProductGrid();
       renderCalendar();
-    }
+    };
 
     function renderProductGrid() {
       const grid = document.getElementById('product-grid');
+      if (!grid) return;
       grid.innerHTML = '';
 
       const todayStr = new Date().toISOString().split('T')[0];
@@ -362,6 +370,7 @@
     function renderCalendar() {
       const calendarGrid = document.getElementById('calendar-grid');
       const eventsListContainer = document.getElementById('upcoming-events-list');
+      if (!calendarGrid || !eventsListContainer) return;
       
       const now = new Date();
       const year = now.getFullYear();
@@ -401,9 +410,4 @@
       eventsListContainer.innerHTML = '';
       const filteredEvents = marketEvents.slice(0, 3);
       if (filteredEvents.length === 0) {
-        eventsListContainer.innerHTML = `<div class="text-[10px] text-gray-400">No upcoming events for ${currentMarket} market.</div>`;
-      } else {
-        filteredEvents.forEach(ev => {
-          eventsListContainer.innerHTML += `
-            <div class="p-2 bg-gray-900 rounded-xl border-l-4 border-emerald-500 text-[11px]">
-              <span cla
+        eventsListContainer.innerHTML = `<div class="text-[10px] text-gray-400">No 
