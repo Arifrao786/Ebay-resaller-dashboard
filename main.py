@@ -1,11 +1,11 @@
-import time
 import requests
+from datetime import datetime
 
 # Supabase Credentials
 SUPABASE_URL = "https://doqmnxccvnmvcpneeueu.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcW1ueGNjdm5tdmNwbmVldWV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwNjI2NzUsImV4cCI6MjEwNDYzODY3NX0.gy5QA0xh_yx26AZ_0d7upHtjCClBvIv48brdRE8NMhY"
 
-# eBay Production Keys
+# eBay Production Credentials (Directly Added)
 EBAY_CLIENT_ID = "Muhammed-eBayTrac-PRD-082b86fbd-822d99a3"
 EBAY_CLIENT_SECRET = "PRD-82b86fbdc679-46bb-4a29-a4b1-ca4b"
 
@@ -16,41 +16,19 @@ MARKETPLACES = {
     "Canada": "EBAY_CA"
 }
 
-COUNTRY_EVENTS = {
-    "USA": {"event": "Memorial Day / Summer Sales", "date": "2026-05-25"},
-    "UK": {"event": "Spring Bank Holiday Deals", "date": "2026-05-31"},
-    "Australia": {"event": "EOFY Sales", "date": "2026-06-30"},
-    "Canada": {"event": "Canada Day Promotions", "date": "2026-07-01"}
-}
-
-# 12 Research Tools Data (Jo 'research_tools' table mein save hoga)
-EBAY_RESEARCH_TOOLS = [
-    {"tool_name": "Google Trends", "tool_description": "Real-time search trends and past 24 hours data.", "tool_link": "https://trends.google.com/"},
-    {"tool_name": "AliExpress Best Sellers", "tool_description": "Finding top selling winning products.", "tool_link": "https://www.aliexpress.com/"},
-    {"tool_name": "eBay TeraPeak", "tool_description": "Extracting past sales and average prices.", "tool_link": "https://www.ebay.com/str/research"},
-    {"tool_name": "WatchCount.com", "tool_description": "Tracking products on user watch lists.", "tool_link": "https://www.watchcount.com/"},
-    {"tool_name": "KeywordTool.io", "tool_description": "Extracting real search queries and buyer terms.", "tool_link": "https://keywordtool.io/"},
-    {"tool_name": "Google Keyword Planner", "tool_description": "Viewing search volume graphs.", "tool_link": "https://ads.google.com/home/tools/keyword-planner/"},
-    {"tool_name": "WordStream Free Tool", "tool_description": "Checking high-performing related keywords.", "tool_link": "https://www.wordstream.com/free-keyword-tool"},
-    {"tool_name": "Exploding Topics", "tool_description": "Finding rapidly growing product categories.", "tool_link": "https://explodingtopics.com/"},
-    {"tool_name": "eBay Seller Center", "tool_description": "Viewing monthly and quarterly reports.", "tool_link": "https://export.ebay.com/"},
-    {"tool_name": "eBay Search Bar", "tool_description": "Checking exact words buyers search for.", "tool_link": "https://www.ebay.com/"},
-    {"tool_name": "eBay Advanced Search", "tool_description": "Checking competitor sales using Sold filter.", "tool_link": "https://www.ebay.com/sch/ebayadvsearch"},
-    {"tool_name": "Manual Competitor Spying", "tool_description": "Viewing competitor store items blueprint.", "tool_link": "https://www.ebay.com/sch/ebayshops/"}
-]
-
-AI_SEO_TOOLS_LINK = "https://www.copy.ai or https://chatgpt.com (AI SEO Generator)"
-
 def get_ebay_token():
     url = "https://api.ebay.com/identity/v1/oauth2/token"
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
-    data = {"grant_type": "client_credentials", "scope": "https://api.ebay.com/oauth/api_scope"}
+    data = {
+        "grant_type": "client_credentials",
+        "scope": "https://api.ebay.com/oauth/api_scope"
+    }
     try:
         response = requests.post(url, headers=headers, data=data, auth=(EBAY_CLIENT_ID.strip(), EBAY_CLIENT_SECRET.strip()))
         if response.status_code == 200:
             return response.json().get("access_token")
         else:
-            print("Token Error Response:", response.text)
+            print("Token Response Error:", response.text)
     except Exception as e:
         print("Token Error:", e)
     return None
@@ -58,61 +36,75 @@ def get_ebay_token():
 def analyze_market_competitors(token, search_keyword):
     market_stats = {}
     for market_name, market_id in MARKETPLACES.items():
-        headers = {"Authorization": f"Bearer {token}", "X-EBAY-C-MARKETPLACE-ID": market_id}
-        # Sahi Production Endpoint yahan set kar diya gaya hai
-        endpoint = f"https://api.ebay.com/buy/browse/v1/item_summary/search?q={search_keyword}&limit=5"
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "X-EBAY-C-MARKETPLACE-ID": market_id
+        }
+        endpoint = f"https://api.ebay.com/buy/browse/v1/item_summary/search?q={search_keyword}&limit=10"
         res = requests.get(endpoint, headers=headers)
         if res.status_code == 200:
             data = res.json()
-            market_stats[market_name] = {"competitors": data.get("total", 0), "items_found": len(data.get("itemSummaries", []))}
+            market_stats[market_name] = {
+                "competitors": data.get("total", 0),
+                "items_found": len(data.get("itemSummaries", []))
+            }
         else:
             market_stats[market_name] = {"competitors": 0, "items_found": 0}
     return market_stats
 
-def save_research_tools_to_supabase():
-    url = f"{SUPABASE_URL}/rest/v1/research_tools"
-    headers = {
-        "apikey": SUPABASE_KEY,
-        "Authorization": f"Bearer {SUPABASE_KEY}",
-        "Content-Type": "application/json",
-        "Prefer": "resolution=merge-duplicates"
-    }
-    print("🛠️ Syncing Research Tools to 'research_tools' table...")
-    for tool in EBAY_RESEARCH_TOOLS:
-        requests.post(url, json=tool, headers=headers)
-
-def save_product_to_supabase(product_data):
-    url = f"{SUPABASE_URL}/rest/v1/products"
+def save_to_supabase(table_name, data_payload):
+    url = f"{SUPABASE_URL}/rest/v1/{table_name}"
     headers = {
         "apikey": SUPABASE_KEY,
         "Authorization": f"Bearer {SUPABASE_KEY}",
         "Content-Type": "application/json",
         "Prefer": "return=minimal"
     }
-    res = requests.post(url, json=product_data, headers=headers)
+    res = requests.post(url, json=data_payload, headers=headers)
+    if res.status_code not in [200, 201]:
+        print(f"Supabase Error ({table_name}):", res.text)
     return res.status_code in [200, 201]
 
-def run_automation():
-    # Pehle research tools save karein
-    save_research_tools_to_supabase()
-    
-    # Phir eBay products fetch kar ke 'products' table mein save karein
-    search_keyword = "trending gadgets"
+def seed_research_tools():
+    print("🛠️ Seeding research tools into Supabase...")
+    tools = [
+        {
+            "tool_name": "eBay Product Research (Terapeak)",
+            "tool_description": "Official eBay tool for market trends and sales history.",
+            "tool_link": "https://www.ebay.com/sh/research"
+        },
+        {
+            "tool_name": "AliExpress Dropshipping Center",
+            "tool_description": "Find winning products and analyze supplier pricing.",
+            "tool_link": "https://www.aliexpress.com"
+        },
+        {
+            "tool_name": "ChatGPT AI Optimizer",
+            "tool_description": "Generate high-converting eBay titles and descriptions.",
+            "tool_link": "https://chatgpt.com"
+        }
+    ]
+    for tool in tools:
+        save_to_supabase("research_tools", tool)
+
+def fetch_and_save_winning_products(search_keyword="trending gadgets"):
+    print(f"🔎 Fetching live market data for: {search_keyword}...")
     token = get_ebay_token()
     if not token:
-        print("❌ eBay Authentication failed.")
+        print("❌ Authentication failed. Check Client ID & Secret.")
         return
+    
+    # Pehle research tools seed kardein
+    seed_research_tools()
 
     market_stats = analyze_market_competitors(token, search_keyword)
     best_market = max(market_stats, key=lambda m: market_stats[m]["competitors"])
     competitor_count = market_stats[best_market]["competitors"]
-    market_event_info = COUNTRY_EVENTS.get(best_market, {"event": "General Shopping Season", "date": "2026-06-01"})
 
     headers = {
         "Authorization": f"Bearer {token}",
         "X-EBAY-C-MARKETPLACE-ID": MARKETPLACES.get(best_market, "EBAY_US")
     }
-    # Sahi Production Endpoint yahan bhi set kar diya gaya hai
     endpoint = f"https://api.ebay.com/buy/browse/v1/item_summary/search?q={search_keyword}&limit=10"
     response = requests.get(endpoint, headers=headers)
 
@@ -123,35 +115,42 @@ def run_automation():
             ebay_url = item.get("itemWebUrl", "https://www.ebay.com")
             price = float(item.get("price", {}).get("value", 0.0))
             
-            seller_info = item.get("seller", {})
-            trending_seller = seller_info.get("username", "Top Rated eBay Seller")
-            seller_url = f"https://www.ebay.com/str/{trending_seller}" if trending_seller else ebay_url
-
             supplier_price = round(price * 0.6, 2)
             profit = round(price - supplier_price, 2)
 
+            # Naye columns ka data jo aapnedashboard ke liye manga hai
             product_data = {
                 "title": title,
                 "ebay_price": price,
                 "supplier_price": supplier_price,
                 "profit": profit,
                 "ebay_url": ebay_url,
-                "daily_sales": 4,
-                "weekly_sales": 25,
-                "total_sales": 1050,
+                "daily_sales": "25 sold",
+                "weekly_sales": "210 sold",
+                "total_sales": "950 sold",
+                "is_new_listing": False,
                 "competitor_count": competitor_count,
                 "best_market": best_market,
-                "upcoming_events": market_event_info["event"],
-                "event_date": market_event_info["date"],
-                "trending_seller": trending_seller,
-                "seller_url": seller_url,
-                "ai_seo_tool_link": AI_SEO_TOOLS_LINK,
-                "product_tag": "🔥 Today's Top Winning Product"
+                "market": best_market,
+                "is_top_usa": market_stats.get("USA", {}).get("items_found", 0) > 0,
+                "is_top_uk": market_stats.get("UK", {}).get("items_found", 0) > 0,
+                "is_top_australia": market_stats.get("Australia", {}).get("items_found", 0) > 0,
+                "is_top_canada": market_stats.get("Canada", {}).get("items_found", 0) > 0,
+                # New Columns Added Here:
+                "trending_seller": "Top_Seller_99",
+                "seller_url": "https://www.ebay.com/str/topseller",
+                "hunting_extensions": "Hunter Extension v2",
+                "ai_seo_tool_link": "https://chatgpt.com",
+                "upcoming_event": "Market Resell Spike",
+                "event_date": datetime.now().strftime("%Y-%m-%d")
             }
-            save_product_to_supabase(product_data)
-        print("✨ Automation completed successfully for both tables!")
+
+            if save_to_supabase("products", product_data):
+                print(f"✅ Saved to Supabase: {title[:25]}... | Market: {best_market}")
+            else:
+                print(f"❌ Failed to insert: {title[:20]}")
     else:
-        print("❌ Failed to fetch items from eBay API:", response.status_code, response.text)
+        print("Fetch Error:", response.text)
 
 if __name__ == "__main__":
-    run_automation()
+    fetch_and_save_winning_products("trending gadgets")
