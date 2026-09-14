@@ -135,7 +135,6 @@
   <!-- JavaScript Application Script -->
   <script>
     const SUPABASE_URL = 'https://doqmnxccvnmvcpneeueu.supabase.co';
-    // Using your provided publishable/anon key configuration
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcW1ueGNjdm5tdmNwbmVldWV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwNjI2NzUsImV4cCI6MjEwNDYzODY3NX0.gy5QA0xh_yx26AZ_0d7upHtjCClBvIv48brdRE8NMhY';
     
     const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
@@ -170,18 +169,24 @@
       }
 
       try {
-        // 1. Fetch Products
-        const { data: prodData, error: prodError } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
-        if (prodError) console.error("Products fetch error:", prodError.message);
+        // 1. Fetch Products without strict sorting dependency
+        const { data: prodData, error: prodError } = await supabaseClient.from('products').select('*');
+        if (prodError) {
+          console.error("Products fetch error:", prodError.message);
+        }
         allProductsData = prodData || [];
+        console.log("Loaded Products:", allProductsData);
 
         renderLeftSidebarElements();
         renderProductGrid();
 
         // 2. Fetch Research Tools
         const { data: toolData, error: toolError } = await supabaseClient.from('research_tools').select('*');
-        if (toolError) console.error("Tools fetch error:", toolError.message);
+        if (toolError) {
+          console.error("Tools fetch error:", toolError.message);
+        }
         allResearchTools = toolData || [];
+        console.log("Loaded Tools:", allResearchTools);
         renderResearchTools();
 
         // 3. Render Calendar & Events
@@ -303,7 +308,7 @@
       yesterdayDate.setDate(yesterdayDate.getDate() - 1);
       const yesterdayStr = yesterdayDate.toISOString().split('T')[0];
 
-      let filtered = allProductsData.pop ? allProductsData.filter(p => {
+      let filtered = Array.isArray(allProductsData) ? allProductsData.filter(p => {
         if (currentMarket !== 'ALL') {
           const pMarket = (p.market || 'US').toUpperCase();
           if (pMarket !== currentMarket.toUpperCase()) return false;
@@ -368,7 +373,7 @@
         html += `<div></div>`;
       }
 
-      const marketEvents = allProductsData.filter ? allProductsData.filter(p => {
+      const marketEvents = Array.isArray(allProductsData) ? allProductsData.filter(p => {
         if (currentMarket !== 'ALL' && (p.market || '').toUpperCase() !== currentMarket.toUpperCase()) return false;
         return p.event_date || p.upcoming_event;
       }) : [];
@@ -399,41 +404,4 @@
           eventsListContainer.innerHTML += `
             <div class="p-2 bg-gray-900 rounded-xl border-l-4 border-emerald-500 text-[11px]">
               <span class="font-bold text-white block">${ev.upcoming_event || 'Market Resell Spike'}</span>
-              <span class="text-gray-400 text-[10px]">${ev.event_date || 'Scheduled'} • ${ev.market || currentMarket}</span>
-            </div>
-          `;
-      async function fetchAllData() {
-      if (!supabaseClient) {
-        console.error("Supabase client is missing.");
-        return;
-      }
-
-      try {
-        // 1. Fetch Products (Without strict ordering in case created_at is missing)
-        const { data: prodData, error: prodError } = await supabaseClient.from('products').select('*');
-        if (prodError) {
-          console.error("Products fetch error:", prodError.message);
-          alert("Products Error: " + prodError.message);
-        }
-        allProductsData = prodData || [];
-        console.log("Loaded Products:", allProductsData);
-
-        renderLeftSidebarElements();
-        renderProductGrid();
-
-        // 2. Fetch Research Tools
-        const { data: toolData, error: toolError } = await supabaseClient.from('research_tools').select('*');
-        if (toolError) {
-          console.error("Tools fetch error:", toolError.message);
-        }
-        allResearchTools = toolData || [];
-        console.log("Loaded Tools:", allResearchTools);
-        renderResearchTools();
-
-        // 3. Render Calendar & Events
-        renderCalendar();
-      } catch (err) {
-        console.error("Unexpected fetch error:", err);
-      }
-      }
-          
+              <span class="text-gray-400 text-[10px]
