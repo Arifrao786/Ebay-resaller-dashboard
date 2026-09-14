@@ -145,9 +145,8 @@
     let currentSalesMetric = 'daily';
     let currentMarket = 'ALL';
 
-    window.addEventListener('DOMContentLoaded', () => {
-      fetchAllData();
-    });
+    // Call fetchAllData directly since script is placed at the end of body
+    fetchAllData();
 
     window.handleGoogleLogin = async function() {
       if (!supabaseClient) {
@@ -410,4 +409,4 @@
       eventsListContainer.innerHTML = '';
       const filteredEvents = marketEvents.slice(0, 3);
       if (filteredEvents.length === 0) {
-        eventsListContainer.innerHTML = `<div class="text-[10px] text-gray-400">No 
+        eventsListContainer.innerHTML = `<div class="text-[10px] text-gra
