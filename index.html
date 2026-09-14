@@ -402,4 +402,38 @@
               <span class="text-gray-400 text-[10px]">${ev.event_date || 'Scheduled'} • ${ev.market || currentMarket}</span>
             </div>
           `;
-  
+      async function fetchAllData() {
+      if (!supabaseClient) {
+        console.error("Supabase client is missing.");
+        return;
+      }
+
+      try {
+        // 1. Fetch Products (Without strict ordering in case created_at is missing)
+        const { data: prodData, error: prodError } = await supabaseClient.from('products').select('*');
+        if (prodError) {
+          console.error("Products fetch error:", prodError.message);
+          alert("Products Error: " + prodError.message);
+        }
+        allProductsData = prodData || [];
+        console.log("Loaded Products:", allProductsData);
+
+        renderLeftSidebarElements();
+        renderProductGrid();
+
+        // 2. Fetch Research Tools
+        const { data: toolData, error: toolError } = await supabaseClient.from('research_tools').select('*');
+        if (toolError) {
+          console.error("Tools fetch error:", toolError.message);
+        }
+        allResearchTools = toolData || [];
+        console.log("Loaded Tools:", allResearchTools);
+        renderResearchTools();
+
+        // 3. Render Calendar & Events
+        renderCalendar();
+      } catch (err) {
+        console.error("Unexpected fetch error:", err);
+      }
+      }
+          
