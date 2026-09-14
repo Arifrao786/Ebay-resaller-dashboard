@@ -11,51 +11,8 @@
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col font-sans">
 
-  <!-- AUTH SECTION -->
-  <div id="auth-container" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/80 backdrop-blur-md">
-    <div class="relative overflow-hidden w-full max-w-md p-8 bg-white/95 text-gray-800 rounded-3xl shadow-2xl border border-white/20 m-4">
-      <div class="text-center mb-6 relative z-10">
-        <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl mb-2 shadow-inner">
-          <i class="fa-solid fa-rocket text-xl"></i>
-        </div>
-        <h1 class="text-2xl font-extrabold text-blue-600 flex items-center justify-center gap-2">
-          eBay-Tracer <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full shadow-sm">by Arif</span>
-        </h1>
-        <p class="text-xs text-gray-500 mt-1">Automated Winning Product Research Portal</p>
-      </div>
-
-      <div class="flex border-b border-gray-200 mb-6 relative z-10">
-        <button type="button" id="tab-login" onclick="switchMode('login')" class="w-1/2 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none text-sm cursor-pointer">Sign In</button>
-        <button type="button" id="tab-signup" onclick="switchMode('signup')" class="w-1/2 py-2 font-bold text-gray-400 hover:text-blue-600 focus:outline-none text-sm cursor-pointer">Sign Up</button>
-      </div>
-
-      <div id="auth-msg" class="hidden p-3 mb-4 text-sm rounded-lg text-center font-medium relative z-10"></div>
-
-      <form id="auth-form" class="space-y-4 relative z-10" onsubmit="event.preventDefault(); handleAuth();">
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Email Address</label>
-          <input type="email" id="email" required class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-gray-50" placeholder="name@example.com">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Password</label>
-          <div class="relative">
-            <input type="password" id="password" required class="w-full border border-gray-300 rounded-xl p-3 pr-10 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-gray-50" placeholder="••••••••">
-            <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800 focus:outline-none">
-              <i id="eye-icon" class="fa-regular fa-eye"></i>
-            </button>
-          </div>
-        </div>
-        <div class="pt-2">
-          <button type="submit" id="submit-btn" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-lg text-sm cursor-pointer">
-            Sign In
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MAIN DASHBOARD -->
-  <div id="dashboard-container" class="hidden flex flex-col min-h-screen">
+  <!-- DIRECT MAIN DASHBOARD (No Authentication screen on start) -->
+  <div id="dashboard-container" class="flex flex-col min-h-screen">
     
     <!-- Navbar -->
     <header class="bg-gray-800 border-b border-gray-700 px-6 py-4 flex items-center justify-between shadow-md">
@@ -65,12 +22,13 @@
         </div>
         <div>
           <h1 class="text-lg font-bold text-white tracking-wide">eBay-Tracer <span class="text-xs bg-blue-900 text-blue-300 px-2 py-0.5 rounded-full">by Arif</span></h1>
-          <p class="text-xs text-gray-400">Winning Product Research Portal</p>
+          <p class="text-xs text-gray-400">Automated Winning Product Research Portal</p>
         </div>
       </div>
-      <div>
-        <button onclick="handleSignOut()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow cursor-pointer flex items-center gap-2">
-          <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+      <div class="flex items-center gap-3">
+        <!-- Continue with Google Option inside Dashboard Header -->
+        <button onclick="handleGoogleLogin()" class="bg-white hover:bg-gray-100 text-gray-800 text-xs font-bold px-4 py-2 rounded-xl transition shadow cursor-pointer flex items-center gap-2 border border-gray-300">
+          <i class="fa-brands fa-google text-red-500"></i> Continue with Google
         </button>
       </div>
     </header>
@@ -191,73 +149,28 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcW1ueGNjdm5tdmNwbmVldWV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwNjI2NzUsImV4cCI6MjEwNDYzODY3NX0.gy5QA0xh_yx26AZ_0d7upHtjCClBvIv48brdRE8NMhY';
     const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-    let currentMode = 'login';
     let allProductsData = [];
     let allResearchTools = [];
-    let allEventsData = [];
     let currentDateFilter = 'all';
     let currentSalesMetric = 'daily';
     let currentMarket = 'ALL';
 
-    function switchMode(mode) {
-      currentMode = mode;
-      document.getElementById('tab-login').className = mode === 'login' ? "w-1/2 py-2 font-bold text-blue-600 border-b-2 border-blue-600 text-sm cursor-pointer" : "w-1/2 py-2 font-bold text-gray-400 text-sm cursor-pointer";
-      document.getElementById('tab-signup').className = mode === 'signup' ? "w-1/2 py-2 font-bold text-blue-600 border-b-2 border-blue-600 text-sm cursor-pointer" : "w-1/2 py-2 font-bold text-gray-400 text-sm cursor-pointer";
-      document.getElementById('submit-btn').innerText = mode === 'login' ? "Sign In" : "Sign Up";
-    }
+    // Automatically load data when page opens directly
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchAllData();
+    });
 
-    function togglePasswordVisibility() {
-      const pwdInput = document.getElementById('password');
-      const eyeIcon = document.getElementById('eye-icon');
-      if (pwdInput.type === 'password') {
-        pwdInput.type = 'text';
-        eyeIcon.className = 'fa-regular fa-eye-slash';
-      } else {
-        pwdInput.type = 'password';
-        eyeIcon.className = 'fa-regular fa-eye';
-      }
-    }
-
-    async function handleAuth() {
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
-      const msgEl = document.getElementById('auth-msg');
-      msgEl.classList.add('hidden');
-
+    async function handleGoogleLogin() {
       if (!supabaseClient) {
-        proceedToDashboard();
+        alert("Supabase client not initialized.");
         return;
       }
-
-      try {
-        if (currentMode === 'signup') {
-          const { data, error } = await supabaseClient.auth.signUp({ email, password });
-          if (error) throw error;
-          msgEl.className = 'p-3 mb-4 text-sm rounded-lg text-center font-medium bg-green-100 text-green-700';
-          msgEl.innerText = 'Registration successful! You can now sign in.';
-          msgEl.classList.remove('hidden');
-        } else {
-          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-          if (error) throw error;
-          proceedToDashboard();
-        }
-      } catch (err) {
-        msgEl.className = 'p-3 mb-4 text-sm rounded-lg text-center font-medium bg-red-100 text-red-700';
-        msgEl.innerText = err.message;
-        msgEl.classList.remove('hidden');
+      const { data, error } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+      });
+      if (error) {
+        alert("Google Login Error: " + error.message);
       }
-    }
-
-    function proceedToDashboard() {
-      document.getElementById('auth-container').classList.add('hidden');
-      document.getElementById('dashboard-container').classList.remove('hidden');
-      fetchAllData();
-    }
-
-    function handleSignOut() {
-      if (supabaseClient) supabaseClient.auth.signOut();
-      document.getElementById('dashboard-container').classList.add('hidden');
-      document.getElementById('auth-container').classList.remove('hidden');
     }
 
     async function fetchAllData() {
@@ -290,7 +203,6 @@
 
       let uniqueSellers = [...new Set(allProductsData.map(p => p.trending_seller).filter(Boolean))];
       if (uniqueSellers.length === 0) {
-        uniqueSellers = [{ name: 'Top_Seller_99', url: '#' }];
         sellersList.innerHTML = `<div class="p-2 bg-gray-900 rounded-xl flex justify-between items-center text-xs"><span>Top_Seller_99</span><span class="text-green-400 font-semibold">Active</span></div>`;
       } else {
         uniqueSellers.forEach(seller => {
@@ -308,10 +220,10 @@
       let uniqueExts = [...new Set(allProductsData.map(p => p.hunting_extensions).filter(Boolean))];
       if (uniqueExts.length === 0) {
         extensionsList.innerHTML = `
-          <button onclick="alert('Hunter Extension active!')" class="w-full bg-purple-600/20 text-purple-300 text-xs font-semibold p-2.5 rounded-xl border border-purple-500/30 text-left flex items-center justify-between cursor-pointer">
+          <div class="p-2.5 bg-purple-600/20 text-purple-300 text-xs font-semibold rounded-xl border border-purple-500/30 flex items-center justify-between">
             <span>Hunter Extension v2</span>
-            <i class="fa-solid fa-download"></i>
-          </button>`;
+            <i class="fa-solid fa-check text-green-400"></i>
+          </div>`;
       } else {
         uniqueExts.forEach(ext => {
           extensionsList.innerHTML += `
@@ -322,7 +234,6 @@
         });
       }
 
-      // AI SEO Tool link check from products or fallback
       const aiLink = allProductsData.find(p => p.ai_seo_tool_link)?.ai_seo_tool_link || 'https://chatgpt.com';
       aiContainer.innerHTML = `
         <a href="${aiLink}" target="_blank" class="block text-center w-full bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold py-2.5 rounded-xl transition shadow">
@@ -389,4 +300,104 @@
       const grid = document.getElementById('product-grid');
       grid.innerHTML = '';
 
-      const toda
+      const todayStr = new Date().toISOString().split('T')[0];
+      const yesterdayDate = new Date();
+      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+      const yesterdayStr = yesterdayDate.toISOString().split('T')[0];
+
+      let filtered = allProductsData.filter(p => {
+        if (currentMarket !== 'ALL') {
+          const pMarket = (p.market || 'US').toUpperCase();
+          if (pMarket !== currentMarket.toUpperCase()) return false;
+        }
+
+        const pDate = p.created_at ? p.created_at.split('T')[0] : '';
+        if (currentDateFilter === 'today') {
+          return pDate === todayStr;
+        } else if (currentDateFilter === 'yesterday') {
+          return pDate === yesterdayStr;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10 bg-gray-800/50 rounded-2xl border border-gray-700 text-xs">No products found matching this filter.</div>`;
+        return;
+      }
+
+      filtered.forEach(p => {
+        let salesText = p.sales_daily || '25 sold';
+        if (currentSalesMetric === 'weekly') salesText = p.sales_weekly || '210 sold';
+        if (currentSalesMetric === 'overall') salesText = p.sales_overall || '950 sold';
+
+        const card = document.createElement('div');
+        card.className = "bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg flex flex-col justify-between";
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-[10px] bg-blue-900/50 text-blue-300 px-2 py-0.5 rounded-md font-semibold">${p.market || 'US'}</span>
+              <span class="text-[10px] bg-green-900/50 text-green-300 px-2 py-0.5 rounded-md font-semibold">${p.created_at?.split('T')[0] === todayStr ? "🔥 Today" : "📦 Archive"}</span>
+            </div>
+            <h4 class="text-sm font-bold text-white mb-1">${p.title || p.product_name || 'Winning Item'}</h4>
+            <p class="text-xs text-gray-400 mb-3">Competitors: <span class="text-yellow-400 font-bold">${p.competitors || p.competitor_count || '5'} Active</span> (${currentSalesMetric.toUpperCase()}: <span class="text-green-400 font-bold">${salesText}</span>)</p>
+          </div>
+          <div class="pt-3 border-t border-gray-700 flex items-center justify-between">
+            <span class="text-xs font-bold text-blue-400">$${p.price || '0.00'}</span>
+            <div class="flex gap-2">
+              <a href="${p.aliexpress_url || 'https://www.aliexpress.com'}" target="_blank" class="bg-orange-600 hover:bg-orange-700 text-white text-[10px] px-2.5 py-1.5 rounded-xl font-semibold transition">Supplier</a>
+              <a href="${p.ebay_url || p.link || 'https://www.ebay.com'}" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] px-2.5 py-1.5 rounded-xl font-semibold transition">eBay</a>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function renderCalendar() {
+      const calendarGrid = document.getElementById('calendar-grid');
+      const eventsListContainer = document.getElementById('upcoming-events-list');
+      
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstDayIndex = new Date(year, month, 1).getDay();
+
+      const daysOfWeek = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+      let html = daysOfWeek.map(d => `<span class="text-gray-500 font-bold">${d}</span>`).join('');
+
+      for (let i = 0; i < firstDayIndex; i++) {
+        html += `<div></div>`;
+      }
+
+      const marketEvents = allProductsData.filter(p => {
+        if (currentMarket !== 'ALL' && (p.market || '').toUpperCase() !== currentMarket.toUpperCase()) return false;
+        return p.event_date || p.upcoming_event;
+      });
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const isToday = day === now.getDate();
+        const hasEvent = marketEvents.some(p => {
+          if (!p.event_date) return false;
+          const evDate = new Date(p.event_date);
+          return evDate.getDate() === day && evDate.getMonth() === month;
+        });
+
+        let cls = "py-1 text-gray-300 rounded";
+        if (isToday) cls = "py-1 bg-blue-600 text-white font-bold rounded";
+        else if (hasEvent) cls = "py-1 bg-emerald-600/30 text-emerald-300 font-bold border border-emerald-500/50 rounded";
+
+        html += `<div class="${cls}">${day}</div>`;
+      }
+
+      calendarGrid.innerHTML = html;
+
+      eventsListContainer.innerHTML = '';
+      const filteredEvents = marketEvents.slice(0, 3);
+      if (filteredEvents.length === 0) {
+        eventsListContainer.innerHTML = `<div class="text-[10px] text-gray-400">No upcoming events for ${currentMarket} market.</div>`;
+      } else {
+        filteredEvents.forEach(ev => {
+          eventsListContainer.innerHTML += `
+            <div class="p-2 bg-gray-900 rounded-xl border-l-4 border-emerald-500 text-[11px]">
+              <s
