@@ -127,11 +127,11 @@
     <!-- Supabase Connection & App Script -->
     <script>
         const SUPABASE_URL = 'https://doqmnxccvnmvcpneeueu.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcW1ueGNjdm5tdmNwbmVldWV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjM3Mjc0MDA5MzN9...'; // Apna anon key yahan verify kar lein ya replace kardein agar zaroorat ho
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcW1ueGNjdm5tdmNwbmVldWV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwNjI2NzUsImV4cCI6MjEwNDYzODY3NX0.gy5QA0xh_yx26AZ_0d7upHtjCClBvIv48brdRE8NMhY';
         
-        // Initialize Supabase Client safely
+        // Initialize Supabase Client safely with full key
         const { createClient } = supabase;
-        const _supabase = createClient('https://doqmnxccvnmvcpneeueu.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcW1ueGNjdm5tdmNwbmVldWV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjM3Mjc0MDA5MzN9');
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let isSignUp = false;
         let currentMarket = 'ALL';
