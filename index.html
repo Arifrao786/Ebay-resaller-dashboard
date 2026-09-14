@@ -11,7 +11,7 @@
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col font-sans">
 
-  <!-- DIRECT MAIN DASHBOARD (No Authentication screen on start) -->
+  <!-- DIRECT MAIN DASHBOARD -->
   <div id="dashboard-container" class="flex flex-col min-h-screen">
     
     <!-- Navbar -->
@@ -26,7 +26,6 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
-        <!-- Continue with Google Option inside Dashboard Header -->
         <button onclick="handleGoogleLogin()" class="bg-white hover:bg-gray-100 text-gray-800 text-xs font-bold px-4 py-2 rounded-xl transition shadow cursor-pointer flex items-center gap-2 border border-gray-300">
           <i class="fa-brands fa-google text-red-500"></i> Continue with Google
         </button>
@@ -36,7 +35,7 @@
     <!-- 3-Column Layout -->
     <div class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
       
-      <!-- LEFT SIDEBAR: Trending Sellers, Extensions & Research Tools -->
+      <!-- LEFT SIDEBAR -->
       <aside class="space-y-6">
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
           <h3 class="text-sm font-bold text-blue-400 mb-3 flex items-center gap-2">
@@ -56,7 +55,6 @@
           </div>
         </div>
 
-        <!-- Supabase Research Tools Table Data -->
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
           <h3 class="text-sm font-bold text-emerald-400 mb-3 flex items-center gap-2">
             <i class="fa-solid fa-toolbox"></i> Research Tools
@@ -67,9 +65,8 @@
         </div>
       </aside>
 
-      <!-- CENTER SECTION: Products Grid & Date Switches -->
+      <!-- CENTER SECTION -->
       <main class="lg:col-span-2 space-y-4">
-        <!-- Today / Yesterday & Sales Switcher Bar -->
         <div class="bg-gray-800 border border-gray-700 p-3 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow">
           <div class="flex gap-1.5">
             <button onclick="filterProductsByDate('all')" id="date-all" class="px-3 py-1.5 bg-blue-600 text-white text-[11px] font-bold rounded-xl transition cursor-pointer">All</button>
@@ -83,7 +80,6 @@
           </div>
         </div>
 
-        <!-- Dynamic Product Cards Grid -->
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="col-span-full text-center text-gray-400 py-10 bg-gray-800/50 rounded-2xl border border-gray-700">
             <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-blue-500"></i>
@@ -92,7 +88,7 @@
         </div>
       </main>
 
-      <!-- RIGHT SIDEBAR: Market Switcher, AI SEO & Calendar -->
+      <!-- RIGHT SIDEBAR -->
       <aside class="space-y-6">
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
           <h3 class="text-sm font-bold text-yellow-400 mb-3 flex items-center gap-2">
@@ -107,7 +103,6 @@
           </select>
         </div>
 
-        <!-- AI SEO Tool Link Tab -->
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
           <h3 class="text-sm font-bold text-cyan-400 mb-2 flex items-center gap-2">
             <i class="fa-solid fa-wand-magic-sparkles"></i> AI SEO Tool
@@ -119,24 +114,18 @@
           </div>
         </div>
 
-        <!-- Upcoming Events Calendar with Market Switcher Button -->
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg space-y-3">
           <div class="flex justify-between items-center">
             <h3 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
               <i class="fa-solid fa-calendar-days"></i> Upcoming Events
             </h3>
           </div>
-          <!-- Calendar Switcher Button inside calendar header -->
           <div class="flex justify-between items-center bg-gray-900 px-3 py-1.5 rounded-xl text-xs">
             <span id="cal-month-year" class="font-bold text-white">September 2026</span>
             <span id="cal-market-label" class="text-[10px] bg-emerald-900/50 text-emerald-300 px-2 py-0.5 rounded uppercase font-semibold">ALL</span>
           </div>
-          <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center text-[10px]">
-            <!-- Rendered via JS -->
-          </div>
-          <div id="upcoming-events-list" class="space-y-2 text-xs pt-2 border-t border-gray-700">
-            <!-- Dynamic events -->
-          </div>
+          <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center text-[10px]"></div>
+          <div id="upcoming-events-list" class="space-y-2 text-xs pt-2 border-t border-gray-700"></div>
         </div>
       </aside>
 
@@ -146,7 +135,9 @@
   <!-- JavaScript Application Script -->
   <script>
     const SUPABASE_URL = 'https://doqmnxccvnmvcpneeueu.supabase.co';
+    // Using your provided publishable/anon key configuration
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcW1ueGNjdm5tdmNwbmVldWV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwNjI2NzUsImV4cCI6MjEwNDYzODY3NX0.gy5QA0xh_yx26AZ_0d7upHtjCClBvIv48brdRE8NMhY';
+    
     const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
     let allProductsData = [];
@@ -155,7 +146,6 @@
     let currentSalesMetric = 'daily';
     let currentMarket = 'ALL';
 
-    // Automatically load data when page opens directly
     window.addEventListener('DOMContentLoaded', () => {
       fetchAllData();
     });
@@ -174,23 +164,31 @@
     }
 
     async function fetchAllData() {
-      if (!supabaseClient) return;
+      if (!supabaseClient) {
+        console.error("Supabase client is missing.");
+        return;
+      }
 
-      // 1. Fetch Products
-      const { data: prodData } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
-      allProductsData = prodData || [];
+      try {
+        // 1. Fetch Products
+        const { data: prodData, error: prodError } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
+        if (prodError) console.error("Products fetch error:", prodError.message);
+        allProductsData = prodData || [];
 
-      // Extract unique trending sellers & extensions from products
-      renderLeftSidebarElements();
-      renderProductGrid();
+        renderLeftSidebarElements();
+        renderProductGrid();
 
-      // 2. Fetch Research Tools (`research_tools`)
-      const { data: toolData } = await supabaseClient.from('research_tools').select('*');
-      allResearchTools = toolData || [];
-      renderResearchTools();
+        // 2. Fetch Research Tools
+        const { data: toolData, error: toolError } = await supabaseClient.from('research_tools').select('*');
+        if (toolError) console.error("Tools fetch error:", toolError.message);
+        allResearchTools = toolData || [];
+        renderResearchTools();
 
-      // 3. Render Calendar & Events
-      renderCalendar();
+        // 3. Render Calendar & Events
+        renderCalendar();
+      } catch (err) {
+        console.error("Unexpected fetch error:", err);
+      }
     }
 
     function renderLeftSidebarElements() {
@@ -305,7 +303,7 @@
       yesterdayDate.setDate(yesterdayDate.getDate() - 1);
       const yesterdayStr = yesterdayDate.toISOString().split('T')[0];
 
-      let filtered = allProductsData.filter(p => {
+      let filtered = allProductsData.pop ? allProductsData.filter(p => {
         if (currentMarket !== 'ALL') {
           const pMarket = (p.market || 'US').toUpperCase();
           if (pMarket !== currentMarket.toUpperCase()) return false;
@@ -318,10 +316,10 @@
           return pDate === yesterdayStr;
         }
         return true;
-      });
+      }) : [];
 
       if (filtered.length === 0) {
-        grid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10 bg-gray-800/50 rounded-2xl border border-gray-700 text-xs">No products found matching this filter.</div>`;
+        grid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10 bg-gray-800/50 rounded-2xl border border-gray-700 text-xs">No products found matching this filter or database is empty.</div>`;
         return;
       }
 
@@ -370,10 +368,10 @@
         html += `<div></div>`;
       }
 
-      const marketEvents = allProductsData.filter(p => {
+      const marketEvents = allProductsData.filter ? allProductsData.filter(p => {
         if (currentMarket !== 'ALL' && (p.market || '').toUpperCase() !== currentMarket.toUpperCase()) return false;
         return p.event_date || p.upcoming_event;
-      });
+      }) : [];
 
       for (let day = 1; day <= daysInMonth; day++) {
         const isToday = day === now.getDate();
@@ -400,4 +398,8 @@
         filteredEvents.forEach(ev => {
           eventsListContainer.innerHTML += `
             <div class="p-2 bg-gray-900 rounded-xl border-l-4 border-emerald-500 text-[11px]">
-              <s
+              <span class="font-bold text-white block">${ev.upcoming_event || 'Market Resell Spike'}</span>
+              <span class="text-gray-400 text-[10px]">${ev.event_date || 'Scheduled'} • ${ev.market || currentMarket}</span>
+            </div>
+          `;
+  
