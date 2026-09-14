@@ -1,289 +1,392 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eBay-Tracer by Arif</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @keyframes bgMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .animated-bg {
-            background: linear-gradient(-45deg, #001f3f, #0074D9, #7FDBFF, #39CCCC);
-            background-size: 400% 400%;
-            animation: bgMove 15s ease infinite;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eBay-Tracer by Arif - Automated Winning Product Research Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-gray-900 text-white font-sans antialiased min-h-screen">
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col font-sans">
 
-    <!-- AUTH SECTION (Login / Signup) -->
-    <div id="auth-section" class="flex items-center justify-center min-h-screen animated-bg p-4">
-        <div class="bg-gray-800/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md border border-gray-700">
-            <div class="text-center mb-6">
-                <div class="text-3xl font-black tracking-wider text-blue-400 mb-2">
-                    <i class="fa-solid fa-satellite-dish"></i> eBay-Tracer <span class="text-white text-lg">by Arif</span>
-                </div>
-                <p class="text-gray-400 text-sm">Professional Dropshipping & Competitor Intelligence</p>
-            </div>
-
-            <!-- Tabs -->
-            <div class="flex mb-6 bg-gray-900 p-1 rounded-xl">
-                <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white transition">Login</button>
-                <button id="tab-signup" onclick="switchAuthTab('signup')" class="flex-1 py-2 text-sm font-semibold rounded-lg text-gray-400 transition">Sign Up</button>
-            </div>
-
-            <!-- Form -->
-            <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Email Address</label>
-                    <input type="email" id="auth-email" required class="w-full px-4 py-2.5 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Password</label>
-                    <div class="relative">
-                        <input type="password" id="auth-password" required class="w-full px-4 py-2.5 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500 text-sm pr-10">
-                        <button type="button" onclick="togglePassword()" class="absolute right-3 top-3 text-gray-400 hover:text-white">
-                            <i id="eye-icon" class="fa-solid fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-                <button type="submit" id="auth-btn" class="w-full py-3 bg-blue-600 hover:bg-blue-500 font-bold rounded-lg transition shadow-lg shadow-blue-600/30 text-sm">Login to Dashboard</button>
-            </form>
-            <div id="auth-msg" class="mt-4 text-center text-xs text-red-400"></div>
+  <!-- AUTH SECTION -->
+  <div id="auth-container" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/80 backdrop-blur-md">
+    <div class="relative overflow-hidden w-full max-w-md p-8 bg-white/95 text-gray-800 rounded-3xl shadow-2xl border border-white/20 m-4">
+      <div class="text-center mb-6 relative z-10">
+        <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl mb-2 shadow-inner">
+          <i class="fa-solid fa-rocket text-xl"></i>
         </div>
-    </div>
+        <h1 class="text-2xl font-extrabold text-blue-600 flex items-center justify-center gap-2">
+          eBay-Tracer <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full shadow-sm">by Arif</span>
+        </h1>
+        <p class="text-xs text-gray-500 mt-1">Automated Winning Product Research Portal</p>
+      </div>
 
-    <!-- MAIN DASHBOARD SECTION -->
-    <div id="dashboard-section" class="hidden min-h-screen flex flex-col">
-        <!-- Top Navbar -->
-        <header class="bg-gray-800 border-b border-gray-700 px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="bg-blue-600 p-2 rounded-xl text-white font-black text-xl shadow-md">
-                    <i class="fa-solid fa-satellite-dish"></i>
-                </div>
-                <div>
-                    <h1 class="font-extrabold text-lg tracking-wide text-blue-400">eBay-Tracer <span class="text-white text-xs font-normal">by Arif</span></h1>
-                    <p class="text-xs text-gray-400">Live Market Intelligence & Dropshipping SaaS</p>
-                </div>
-            </div>
-            <div>
-                <button onclick="signOut()" class="px-4 py-2 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white text-xs font-semibold rounded-lg transition border border-red-600/30">
-                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Sign Out
-                </button>
-            </div>
-        </header>
+      <div class="flex border-b border-gray-200 mb-6 relative z-10">
+        <button type="button" id="tab-login" onclick="switchMode('login')" class="w-1/2 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none text-sm cursor-pointer">Sign In</button>
+        <button type="button" id="tab-signup" onclick="switchMode('signup')" class="w-1/2 py-2 font-bold text-gray-400 hover:text-blue-600 focus:outline-none text-sm cursor-pointer">Sign Up</button>
+      </div>
 
-        <!-- Dashboard Content Container -->
-        <div class="flex flex-1 flex-col md:flex-row">
-            <!-- Sidebar Filters -->
-            <aside class="w-full md:w-64 bg-gray-800/50 border-r border-gray-700 p-4 space-y-6">
-                <div>
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Marketplace</h3>
-                    <div class="space-y-1">
-                        <button onclick="filterMarket('ALL')" class="market-btn w-full text-left px-3 py-2 text-xs font-medium rounded-lg bg-blue-600 text-white transition">All Markets</button>
-                        <button onclick="filterMarket('USA')" class="market-btn w-full text-left px-3 py-2 text-xs font-medium rounded-lg text-gray-300 hover:bg-gray-700 transition">🇺🇸 USA Market</button>
-                        <button onclick="filterMarket('UK')" class="market-btn w-full text-left px-3 py-2 text-xs font-medium rounded-lg text-gray-300 hover:bg-gray-700 transition">🇬🇧 UK Market</button>
-                        <button onclick="filterMarket('AU')" class="market-btn w-full text-left px-3 py-2 text-xs font-medium rounded-lg text-gray-300 hover:bg-gray-700 transition">🇦🇺 Australia Market</button>
-                        <button onclick="filterMarket('CA')" class="market-btn w-full text-left px-3 py-2 text-xs font-medium rounded-lg text-gray-300 hover:bg-gray-700 transition">🇨🇦 Canada Market</button>
-                    </div>
-                </div>
+      <div id="auth-msg" class="hidden p-3 mb-4 text-sm rounded-lg text-center font-medium relative z-10"></div>
 
-                <div>
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Time Filter</h3>
-                    <div class="space-y-1">
-                        <button onclick="filterTime('ALL')" class="time-btn w-full text-left px-3 py-2 text-xs font-medium rounded-lg bg-blue-600 text-white transition">All Products</button>
-                        <button onclick="filterTime('TODAY')" class="time-btn w-full text-left px-3 py-2 text-xs font-medium rounded-lg text-gray-300 hover:bg-gray-700 transition">Today's Trending</button>
-                        <button onclick="filterTime('YESTERDAY')" class="time-btn w-full text-left px-3 py-2 text-xs font-medium rounded-lg text-gray-300 hover:bg-gray-700 transition">Yesterday's Top</button>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- Main Product Feed Area -->
-            <main class="flex-1 p-6 bg-gray-900">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold text-white flex items-center">
-                        <i class="fa-solid fa-fire text-orange-500 mr-2"></i> Winning Products Feed
-                    </h2>
-                    <button onclick="loadProducts()" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-xs font-medium rounded-lg border border-gray-700 transition">
-                        <i class="fa-solid fa-rotate mr-1"></i> Refresh Data
-                    </button>
-                </div>
-
-                <!-- Products Grid -->
-                <div id="products-grid" class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                    <!-- Dynamic Product Cards will load here -->
-                    <div class="text-gray-500 text-sm col-span-2 text-center py-12">Loading live database products...</div>
-                </div>
-            </main>
+      <form id="auth-form" class="space-y-4 relative z-10" onsubmit="event.preventDefault(); handleAuth();">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Email Address</label>
+          <input type="email" id="email" required class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-gray-50" placeholder="name@example.com">
         </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Password</label>
+          <div class="relative">
+            <input type="password" id="password" required class="w-full border border-gray-300 rounded-xl p-3 pr-10 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-gray-50" placeholder="••••••••">
+            <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800 focus:outline-none">
+              <i id="eye-icon" class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+        </div>
+        <div class="pt-2">
+          <button type="submit" id="submit-btn" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-lg text-sm cursor-pointer">
+            Sign In
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
 
-    <!-- Supabase Connection & App Script -->
-    <script>
-        const SUPABASE_URL = 'https://doqmnxccvnmvcpneeueu.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcW1ueGNjdm5tdmNwbmVldWV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwNjI2NzUsImV4cCI6MjEwNDYzODY3NX0.gy5QA0xh_yx26AZ_0d7upHtjCClBvIv48brdRE8NMhY';
-        
-        // Initialize Supabase Client safely with full key
-        const { createClient } = supabase;
-        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  <!-- MAIN DASHBOARD -->
+  <div id="dashboard-container" class="hidden flex flex-col min-h-screen">
+    
+    <!-- Navbar -->
+    <header class="bg-gray-800 border-b border-gray-700 px-6 py-4 flex items-center justify-between shadow-md">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-blue-600 text-white flex items-center justify-center rounded-xl font-bold shadow">
+          <i class="fa-solid fa-rocket"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-white tracking-wide">eBay-Tracer <span class="text-xs bg-blue-900 text-blue-300 px-2 py-0.5 rounded-full">by Arif</span></h1>
+          <p class="text-xs text-gray-400">Winning Product Research Portal</p>
+        </div>
+      </div>
+      <div>
+        <button onclick="handleSignOut()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow cursor-pointer flex items-center gap-2">
+          <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+        </button>
+      </div>
+    </header>
 
-        let isSignUp = false;
-        let currentMarket = 'ALL';
-        let currentTimeFilter = 'ALL';
-        let allProductsData = [];
+    <!-- 3-Column Layout -->
+    <div class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+      
+      <!-- LEFT SIDEBAR: Trending Sellers, Extensions & Research Tools -->
+      <aside class="space-y-6">
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
+          <h3 class="text-sm font-bold text-blue-400 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-fire"></i> Trending Sellers & URLs
+          </h3>
+          <div id="trending-sellers-list" class="space-y-2 text-xs text-gray-300">
+            <div class="text-gray-500 text-center py-2">Loading sellers...</div>
+          </div>
+        </div>
 
-        function switchAuthTab(tab) {
-            isSignUp = (tab === 'signup');
-            document.getElementById('tab-login').className = isSignUp ? 'flex-1 py-2 text-sm font-semibold rounded-lg text-gray-400 transition' : 'flex-1 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white transition';
-            document.getElementById('tab-signup').className = isSignUp ? 'flex-1 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white transition' : 'flex-1 py-2 text-sm font-semibold rounded-lg text-gray-400 transition';
-            document.getElementById('auth-btn').innerText = isSignUp ? 'Create Account' : 'Login to Dashboard';
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
+          <h3 class="text-sm font-bold text-purple-400 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-puzzle-piece"></i> Hunting Extensions
+          </h3>
+          <div id="hunting-extensions-list" class="space-y-2">
+            <div class="text-gray-500 text-center py-2 text-xs">Loading extensions...</div>
+          </div>
+        </div>
+
+        <!-- Supabase Research Tools Table Data -->
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
+          <h3 class="text-sm font-bold text-emerald-400 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-toolbox"></i> Research Tools
+          </h3>
+          <div id="research-tools-container" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+            <div class="text-gray-500 text-center py-2 text-xs">Loading tools...</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CENTER SECTION: Products Grid & Date Switches -->
+      <main class="lg:col-span-2 space-y-4">
+        <!-- Today / Yesterday & Sales Switcher Bar -->
+        <div class="bg-gray-800 border border-gray-700 p-3 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow">
+          <div class="flex gap-1.5">
+            <button onclick="filterProductsByDate('all')" id="date-all" class="px-3 py-1.5 bg-blue-600 text-white text-[11px] font-bold rounded-xl transition cursor-pointer">All</button>
+            <button onclick="filterProductsByDate('today')" id="date-today" class="px-3 py-1.5 bg-gray-700 text-gray-300 text-[11px] font-bold rounded-xl transition cursor-pointer">Today Products</button>
+            <button onclick="filterProductsByDate('yesterday')" id="date-yesterday" class="px-3 py-1.5 bg-gray-700 text-gray-300 text-[11px] font-bold rounded-xl transition cursor-pointer">Yesterday Products</button>
+          </div>
+          <div class="flex gap-1.5">
+            <button onclick="switchSalesView('daily')" id="btn-daily" class="px-2.5 py-1.5 bg-blue-600 text-white text-[11px] font-bold rounded-xl cursor-pointer">Daily</button>
+            <button onclick="switchSalesView('weekly')" id="btn-weekly" class="px-2.5 py-1.5 bg-gray-700 text-gray-300 text-[11px] font-bold rounded-xl cursor-pointer">Weekly</button>
+            <button onclick="switchSalesView('overall')" id="btn-overall" class="px-2.5 py-1.5 bg-gray-700 text-gray-300 text-[11px] font-bold rounded-xl cursor-pointer">Overall</button>
+          </div>
+        </div>
+
+        <!-- Dynamic Product Cards Grid -->
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="col-span-full text-center text-gray-400 py-10 bg-gray-800/50 rounded-2xl border border-gray-700">
+            <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-blue-500"></i>
+            <p class="text-xs">Loading Supabase products...</p>
+          </div>
+        </div>
+      </main>
+
+      <!-- RIGHT SIDEBAR: Market Switcher, AI SEO & Calendar -->
+      <aside class="space-y-6">
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
+          <h3 class="text-sm font-bold text-yellow-400 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-globe"></i> Market Switcher
+          </h3>
+          <select id="market-selector" onchange="switchMarket(this.value)" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-xs text-white focus:outline-none cursor-pointer">
+            <option value="ALL">All Markets</option>
+            <option value="US">🇺🇸 United States (USA)</option>
+            <option value="UK">🇬🇧 United Kingdom (UK)</option>
+            <option value="AU">🇦🇺 Australia (Australia)</option>
+            <option value="CA">🇨🇦 Canada (Canada)</option>
+          </select>
+        </div>
+
+        <!-- AI SEO Tool Link Tab -->
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg">
+          <h3 class="text-sm font-bold text-cyan-400 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> AI SEO Tool
+          </h3>
+          <div id="ai-seo-container">
+            <a href="https://chatgpt.com" target="_blank" class="block text-center w-full bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold py-2.5 rounded-xl transition shadow">
+              Launch AI Optimizer 🚀
+            </a>
+          </div>
+        </div>
+
+        <!-- Upcoming Events Calendar with Market Switcher Button -->
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg space-y-3">
+          <div class="flex justify-between items-center">
+            <h3 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+              <i class="fa-solid fa-calendar-days"></i> Upcoming Events
+            </h3>
+          </div>
+          <!-- Calendar Switcher Button inside calendar header -->
+          <div class="flex justify-between items-center bg-gray-900 px-3 py-1.5 rounded-xl text-xs">
+            <span id="cal-month-year" class="font-bold text-white">September 2026</span>
+            <span id="cal-market-label" class="text-[10px] bg-emerald-900/50 text-emerald-300 px-2 py-0.5 rounded uppercase font-semibold">ALL</span>
+          </div>
+          <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center text-[10px]">
+            <!-- Rendered via JS -->
+          </div>
+          <div id="upcoming-events-list" class="space-y-2 text-xs pt-2 border-t border-gray-700">
+            <!-- Dynamic events -->
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <!-- JavaScript Application Script -->
+  <script>
+    const SUPABASE_URL = 'https://doqmnxccvnmvcpneeueu.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcW1ueGNjdm5tdmNwbmVldWV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwNjI2NzUsImV4cCI6MjEwNDYzODY3NX0.gy5QA0xh_yx26AZ_0d7upHtjCClBvIv48brdRE8NMhY';
+    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+    let currentMode = 'login';
+    let allProductsData = [];
+    let allResearchTools = [];
+    let allEventsData = [];
+    let currentDateFilter = 'all';
+    let currentSalesMetric = 'daily';
+    let currentMarket = 'ALL';
+
+    function switchMode(mode) {
+      currentMode = mode;
+      document.getElementById('tab-login').className = mode === 'login' ? "w-1/2 py-2 font-bold text-blue-600 border-b-2 border-blue-600 text-sm cursor-pointer" : "w-1/2 py-2 font-bold text-gray-400 text-sm cursor-pointer";
+      document.getElementById('tab-signup').className = mode === 'signup' ? "w-1/2 py-2 font-bold text-blue-600 border-b-2 border-blue-600 text-sm cursor-pointer" : "w-1/2 py-2 font-bold text-gray-400 text-sm cursor-pointer";
+      document.getElementById('submit-btn').innerText = mode === 'login' ? "Sign In" : "Sign Up";
+    }
+
+    function togglePasswordVisibility() {
+      const pwdInput = document.getElementById('password');
+      const eyeIcon = document.getElementById('eye-icon');
+      if (pwdInput.type === 'password') {
+        pwdInput.type = 'text';
+        eyeIcon.className = 'fa-regular fa-eye-slash';
+      } else {
+        pwdInput.type = 'password';
+        eyeIcon.className = 'fa-regular fa-eye';
+      }
+    }
+
+    async function handleAuth() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const msgEl = document.getElementById('auth-msg');
+      msgEl.classList.add('hidden');
+
+      if (!supabaseClient) {
+        proceedToDashboard();
+        return;
+      }
+
+      try {
+        if (currentMode === 'signup') {
+          const { data, error } = await supabaseClient.auth.signUp({ email, password });
+          if (error) throw error;
+          msgEl.className = 'p-3 mb-4 text-sm rounded-lg text-center font-medium bg-green-100 text-green-700';
+          msgEl.innerText = 'Registration successful! You can now sign in.';
+          msgEl.classList.remove('hidden');
+        } else {
+          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+          proceedToDashboard();
         }
+      } catch (err) {
+        msgEl.className = 'p-3 mb-4 text-sm rounded-lg text-center font-medium bg-red-100 text-red-700';
+        msgEl.innerText = err.message;
+        msgEl.classList.remove('hidden');
+      }
+    }
 
-        function togglePassword() {
-            const pwdInput = document.getElementById('auth-password');
-            const eyeIcon = document.getElementById('eye-icon');
-            if (pwdInput.type === 'password') {
-                pwdInput.type = 'text';
-                eyeIcon.className = 'fa-solid fa-eye-slash';
-            } else {
-                pwdInput.type = 'password';
-                eyeIcon.className = 'fa-solid fa-eye';
-            }
+    function proceedToDashboard() {
+      document.getElementById('auth-container').classList.add('hidden');
+      document.getElementById('dashboard-container').classList.remove('hidden');
+      fetchAllData();
+    }
+
+    function handleSignOut() {
+      if (supabaseClient) supabaseClient.auth.signOut();
+      document.getElementById('dashboard-container').classList.add('hidden');
+      document.getElementById('auth-container').classList.remove('hidden');
+    }
+
+    async function fetchAllData() {
+      if (!supabaseClient) return;
+
+      // 1. Fetch Products
+      const { data: prodData } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
+      allProductsData = prodData || [];
+
+      // Extract unique trending sellers & extensions from products
+      renderLeftSidebarElements();
+      renderProductGrid();
+
+      // 2. Fetch Research Tools (`research_tools`)
+      const { data: toolData } = await supabaseClient.from('research_tools').select('*');
+      allResearchTools = toolData || [];
+      renderResearchTools();
+
+      // 3. Render Calendar & Events
+      renderCalendar();
+    }
+
+    function renderLeftSidebarElements() {
+      const sellersList = document.getElementById('trending-sellers-list');
+      const extensionsList = document.getElementById('hunting-extensions-list');
+      const aiContainer = document.getElementById('ai-seo-container');
+
+      sellersList.innerHTML = '';
+      extensionsList.innerHTML = '';
+
+      let uniqueSellers = [...new Set(allProductsData.map(p => p.trending_seller).filter(Boolean))];
+      if (uniqueSellers.length === 0) {
+        uniqueSellers = [{ name: 'Top_Seller_99', url: '#' }];
+        sellersList.innerHTML = `<div class="p-2 bg-gray-900 rounded-xl flex justify-between items-center text-xs"><span>Top_Seller_99</span><span class="text-green-400 font-semibold">Active</span></div>`;
+      } else {
+        uniqueSellers.forEach(seller => {
+          const prod = allProductsData.find(p => p.trending_seller === seller);
+          const storeUrl = prod?.seller_url || '#';
+          sellersList.innerHTML += `
+            <div class="p-2 bg-gray-900 rounded-xl flex justify-between items-center text-xs">
+              <span class="font-bold text-white">${seller}</span>
+              <a href="${storeUrl}" target="_blank" class="text-blue-400 hover:underline text-[10px]">Visit Store <i class="fa-solid fa-external-link-alt"></i></a>
+            </div>
+          `;
+        });
+      }
+
+      let uniqueExts = [...new Set(allProductsData.map(p => p.hunting_extensions).filter(Boolean))];
+      if (uniqueExts.length === 0) {
+        extensionsList.innerHTML = `
+          <button onclick="alert('Hunter Extension active!')" class="w-full bg-purple-600/20 text-purple-300 text-xs font-semibold p-2.5 rounded-xl border border-purple-500/30 text-left flex items-center justify-between cursor-pointer">
+            <span>Hunter Extension v2</span>
+            <i class="fa-solid fa-download"></i>
+          </button>`;
+      } else {
+        uniqueExts.forEach(ext => {
+          extensionsList.innerHTML += `
+            <div class="p-2.5 bg-purple-600/20 text-purple-300 text-xs font-semibold rounded-xl border border-purple-500/30 flex items-center justify-between">
+              <span>${ext}</span>
+              <i class="fa-solid fa-check text-green-400"></i>
+            </div>`;
+        });
+      }
+
+      // AI SEO Tool link check from products or fallback
+      const aiLink = allProductsData.find(p => p.ai_seo_tool_link)?.ai_seo_tool_link || 'https://chatgpt.com';
+      aiContainer.innerHTML = `
+        <a href="${aiLink}" target="_blank" class="block text-center w-full bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold py-2.5 rounded-xl transition shadow">
+          Launch AI Optimizer 🚀
+        </a>
+      `;
+    }
+
+    function renderResearchTools() {
+      const container = document.getElementById('research-tools-container');
+      if (allResearchTools.length === 0) {
+        container.innerHTML = `<div class="text-gray-500 text-center py-2 text-xs">No research tools found in DB.</div>`;
+        return;
+      }
+
+      container.innerHTML = '';
+      allResearchTools.forEach(tool => {
+        container.innerHTML += `
+          <a href="${tool.tool_link || '#'}" target="_blank" class="block p-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-700/60 rounded-xl transition group">
+            <div class="flex items-center justify-between font-bold text-white text-xs group-hover:text-emerald-400">
+              <span>${tool.tool_name || 'Tool'}</span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-500 group-hover:text-emerald-400"></i>
+            </div>
+            <p class="text-[10px] text-gray-400 mt-0.5 truncate">${tool.tool_description || 'Open tool portal'}</p>
+          </a>
+        `;
+      });
+    }
+
+    function filterProductsByDate(filter) {
+      currentDateFilter = filter;
+      ['all', 'today', 'yesterday'].forEach(f => {
+        const btn = document.getElementById(`date-${f}`);
+        if (f === filter) {
+          btn.className = "px-3 py-1.5 bg-blue-600 text-white text-[11px] font-bold rounded-xl transition cursor-pointer";
+        } else {
+          btn.className = "px-3 py-1.5 bg-gray-700 text-gray-300 text-[11px] font-bold rounded-xl transition cursor-pointer";
         }
+      });
+      renderProductGrid();
+    }
 
-        async function handleAuth(e) {
-            e.preventDefault();
-            const email = document.getElementById('auth-email').value;
-            const password = document.getElementById('auth-password').value;
-            const msgEl = document.getElementById('auth-msg');
-            msgEl.innerText = '';
-
-            try {
-                if (isSignUp) {
-                    const { data, error } = await _supabase.auth.signUp({ email, password });
-                    if (error) throw error;
-                    msgEl.className = 'mt-4 text-center text-xs text-green-400';
-                    msgEl.innerText = 'Registration successful! You can now login.';
-                } else {
-                    const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-                    if (error) throw error;
-                    checkUserSession();
-                }
-            } catch (err) {
-                msgEl.className = 'mt-4 text-center text-xs text-red-400';
-                msgEl.innerText = err.message;
-            }
+    function switchSalesView(metric) {
+      currentSalesMetric = metric;
+      ['daily', 'weekly', 'overall'].forEach(m => {
+        const btn = document.getElementById(`btn-${m}`);
+        if (m === metric) {
+          btn.className = "px-2.5 py-1.5 bg-blue-600 text-white text-[11px] font-bold rounded-xl cursor-pointer";
+        } else {
+          btn.className = "px-2.5 py-1.5 bg-gray-700 text-gray-300 text-[11px] font-bold rounded-xl cursor-pointer";
         }
+      });
+      renderProductGrid();
+    }
 
-        async function signOut() {
-            await _supabase.auth.signOut();
-            document.getElementById('dashboard-section').classList.add('hidden');
-            document.getElementById('auth-section').classList.remove('hidden');
-        }
+    function switchMarket(market) {
+      currentMarket = market;
+      document.getElementById('cal-market-label').innerText = market;
+      renderProductGrid();
+      renderCalendar();
+    }
 
-        async function checkUserSession() {
-            const { data: { session } } = await _supabase.auth.getSession();
-            if (session) {
-                document.getElementById('auth-section').classList.add('hidden');
-                document.getElementById('dashboard-section').classList.remove('hidden');
-                loadProducts();
-            }
-        }
+    function renderProductGrid() {
+      const grid = document.getElementById('product-grid');
+      grid.innerHTML = '';
 
-        async function loadProducts() {
-            const grid = document.getElementById('products-grid');
-            grid.innerHTML = '<div class="text-gray-400 text-sm col-span-2 text-center py-12"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Fetching live database records...</div>';
-
-            try {
-                const { data, error } = await _supabase.from('products').select('*').order('created_at', { ascending: false });
-                if (error) throw error;
-                allProductsData = data || [];
-                renderProducts();
-            } catch (err) {
-                grid.innerHTML = `<div class="text-red-400 text-sm col-span-2 text-center py-12">Error loading products: ${err.message}</div>`;
-            }
-        }
-
-        function filterMarket(market) {
-            currentMarket = market;
-            document.querySelectorAll('.market-btn').forEach(btn => {
-                btn.className = btn.innerText.includes(market) || (market === 'ALL' && btn.innerText.includes('All')) 
-                    ? 'market-btn w-full text-left px-3 py-2 text-xs font-medium rounded-lg bg-blue-600 text-white transition' 
-                    : 'market-btn w-full text-left px-3 py-2 text-xs font-medium rounded-lg text-gray-300 hover:bg-gray-700 transition';
-            });
-            renderProducts();
-        }
-
-        function filterTime(time) {
-            currentTimeFilter = time;
-            document.querySelectorAll('.time-btn').forEach(btn => {
-                btn.className = (time === 'ALL' && btn.innerText.includes('All')) || (time === 'TODAY' && btn.innerText.includes('Today')) || (time === 'YESTERDAY' && btn.innerText.includes('Yesterday'))
-                    ? 'time-btn w-full text-left px-3 py-2 text-xs font-medium rounded-lg bg-blue-600 text-white transition'
-                    : 'time-btn w-full text-left px-3 py-2 text-xs font-medium rounded-lg text-gray-300 hover:bg-gray-700 transition';
-            });
-            renderProducts();
-        }
-
-        function renderProducts() {
-            const grid = document.getElementById('products-grid');
-            let filtered = allProductsData;
-
-            if (currentMarket !== 'ALL') {
-                filtered = filtered.filter(p => p.market && p.market.toUpperCase() === currentMarket);
-            }
-
-            if (filtered.length === 0) {
-                grid.innerHTML = '<div class="text-gray-500 text-sm col-span-2 text-center py-12">No products found matching criteria.</div>';
-                return;
-            }
-
-            grid.innerHTML = filtered.map(p => `
-                <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 flex flex-col justify-between space-y-4 shadow-lg">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-[10px] font-bold rounded uppercase">${p.market || 'USA'}</span>
-                            <h3 class="font-bold text-sm text-white mt-1 line-clamp-1">${p.title || 'Untitled Product'}</h3>
-                        </div>
-                        <span class="text-green-400 font-extrabold text-base">$${p.price || '0.00'}</span>
-                    </div>
-
-                    <!-- Metrics Grid (Competitors & Sales) -->
-                    <div class="grid grid-cols-3 gap-2 bg-gray-900/60 p-3 rounded-lg text-center text-xs">
-                        <div>
-                            <span class="block text-gray-400 text-[10px]">Competitors</span>
-                            <span class="font-bold text-white">${p.competitor_count || 0}</span>
-                        </div>
-                        <div>
-                            <span class="block text-gray-400 text-[10px]">Weekly Sales</span>
-                            <span class="font-bold text-blue-400">${p.weekly_sales || '20+'}</span>
-                        </div>
-                        <div>
-                            <span class="block text-gray-400 text-[10px]">Total Sales</span>
-                            <span class="font-bold text-purple-400">${p.total_sales || '1k+'}</span>
-                        </div>
-                    </div>
-
-                    <!-- Action Links -->
-                    <div class="flex space-x-2 pt-2 border-t border-gray-700">
-                        <a href="${p.ebay_url || '#'}" target="_blank" class="flex-1 py-2 bg-blue-600 hover:bg-blue-500 text-center text-xs font-bold rounded-lg transition text-white shadow">
-                            <i class="fa-solid fa-cart-shopping mr-1"></i> View on eBay
-                        </a>
-                        <a href="${p.aliexpress_url || '#'}" target="_blank" class="flex-1 py-2 bg-orange-600 hover:bg-orange-500 text-center text-xs font-bold rounded-lg transition text-white shadow">
-                            <i class="fa-solid fa-box-open mr-1"></i> Find on AliExpress
-                        </a>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Run session check on page load
-        window.onload = checkUserSession;
-    </script>
-</body>
-</html>
+      const toda
