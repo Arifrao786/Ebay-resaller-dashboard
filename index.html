@@ -156,6 +156,9 @@
       }
       const { data, error } = await supabaseClient.auth.signInWithOAuth({
         provider: 'google',
+        options: {
+          redirectTo: window.location.origin
+        }
       });
       if (error) {
         alert("Google Login Error: " + error.message);
@@ -169,7 +172,7 @@
       }
 
       try {
-        // 1. Fetch Products without strict sorting dependency
+        // 1. Fetch Products including new columns: ai_seo_tool_link, upcoming_event, seller_url, trending_seller, event_date
         const { data: prodData, error: prodError } = await supabaseClient.from('products').select('*');
         if (prodError) {
           console.error("Products fetch error:", prodError.message);
@@ -403,5 +406,4 @@
         filteredEvents.forEach(ev => {
           eventsListContainer.innerHTML += `
             <div class="p-2 bg-gray-900 rounded-xl border-l-4 border-emerald-500 text-[11px]">
-              <span class="font-bold text-white block">${ev.upcoming_event || 'Market Resell Spike'}</span>
-              <span class="text-gray-400 text-[10px]
+              <span cla
